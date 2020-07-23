@@ -203,7 +203,7 @@ of <code>proc</code>.
 </pre>
 </blockquote>
 
-<code>(with-cooked-mode <i>input-port output-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty ~~~FIX_ME</code>
+<code>(with-cooked-mode <i>input-port output-port error-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty CREAD BRKINT ICRNL IMAXBEL OPOST ONCR ISIG ICANON ECHO ECHOE ECHOCTL ECHOEK -IGNBRK -IGNCR -IXOFF -IXANY -INLCR -OCRNL -ONOCR -ONLRET -ECHONL -NOFLSH -TOSTOP -ECHOPRT</code>
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
@@ -217,7 +217,8 @@ well terminate the instance of Scheme you are using, so it is wise to
 quickly switch to a subprocess such as a shell.
 </p>
 <pre class="example">
-~~~FIX_ME add example
+(with-cooked-mode (current-input-port) (current-output-port) (current-error-port)
+                  (lambda (x y z) (&lt;spawn-shell-process&gt x y z))) &rArr; 0
 </pre>
 </blockquote>
 
@@ -245,14 +246,13 @@ settles down.
 
 <h2>Acknowledgments</h2>
 
-<!--
 <p>
-[~~~FIX_ME-after-research conceived the <code>with-*</code>
-and <code>without-echo</code> procedures, particularly their operating
-paradigm which minimizes the classic risk of leaving a terminal in an
-odd, often non-echoing state.
+Alex Shinn conceived the operating paradigm for the
+<code>with-*</code> and <code>without-echo</code> procedures,
+which minimizes the classic risk of leaving a terminal in an odd,
+often non-echoing state.
 </p>
--->
+
 
 <h2>Copyright</h2>
 <p>Copyright &copy; (2020) John Cowan and Harold Ancell.</p>
