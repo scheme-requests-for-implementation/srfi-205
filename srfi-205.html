@@ -35,10 +35,10 @@ for interfacing with embedded hardware and the like.
 How to prescribe and/or enforce safe use of <code>with-cooked-mode</code>.
 </p></li>
 <li><p>
-Whether to include serial line procedures in this, or a separate SRFI.
+Whether to include serial line procedures in this or a separate SRFI.
 </p></li>
 <li><p>
-Whether to support <code>stty(1)</code> style getting and setting of
+Whether to support <code>stty(1)</code>-style getting and setting of
 all of a special device's modes.
 </p></li>
 </ul>
@@ -57,14 +57,14 @@ controlling serial-line hardware, which is still widely used for
 embedded programming and applications.
 </p>
 <p>
-This SRFI provides safe high level wrappers for raw, no echo etc.
+This SRFI provides safe high-level wrappers for raw, no echo, etc.
 terminal modes for use by command-line programs and textual user
 interfaces, and a procedure to set a serial line's characteristics
 such as its baud rate.
 </p>
 <p>
 These two disparate use cases are bundled together in one SRFI because
-the complicated low level infrastructure for implementing either is
+the complicated low-level infrastructure for implementing either is
 roughly the same, except for different sets of constants, which are
 presumably cheap to implement.
 </p>
@@ -187,7 +187,7 @@ of <code>proc</code>.
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
-The terminal is set to "rare", also known as cbreak mode during the
+The terminal is set to "rare", also known as cbreak mode, during the
 dynamic execution of <code>proc</code>, and then is restored to
 canonical "cooked" mode.
 Just as in canonical mode, any read operation on the terminal
