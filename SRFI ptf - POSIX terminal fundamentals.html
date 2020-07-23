@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SRFI ###: POSIX Terminal Fundamentals</title>
+    <link href="/favicon.png" rel="icon" sizes="192x192" type="image/png">
+    <link rel="stylesheet" href="https://srfi.schemers.org//srfi.css" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1"></head>
+  <body>
+    <h1><a href="https://srfi.schemers.org/"><img class="srfi-logo" src="https://srfi.schemers.org/srfi-logo.svg" alt="SRFI logo" /></a>###: POSIX Terminal Fundamentals</h1>
+
+<p>
+by John Cowan (author) and Harold Ancell (author and editor)
+</p>
+
+
+<h2>Status</h2>
+
+
+
+<h2>Abstract</h2>
+
+<p>
+Procedures for command line and terminal interface programs to support
+safely changing and resetting terminal modes, such as cooked to raw
+and back, and serial line device manipulation for embedded and the
+like hardware interfacing.
+</p>
+
+
+<h2>Issues</h2>
+
+<ul>
+<li><p>
+How to prescribe and/or enforce safe use of <code>with-cooked-mode</code>.
+</p></li>
+<li><p>
+Whether to include serial line procedures in this, or a separate SRFI.
+</p></li>
+<li><p>
+Whether to support <code>stty(1)</code> style getting and setting of
+all of a special device's modes.
+</p></li>
+</ul>
+
+
+<h2>Rationale</h2>
+
+<p>
+P<small>OSIX</small> provides a complete set of routines for
+manipulating terminal devices &mdash; putting them in "raw" mode,
+changing and querying their special characters, modifying their I/O
+speeds, and so forth.
+Now that terminal emulators have almost completely displaced
+terminals, very little of this is useful except for directly
+controlling serial-line hardware, which is still widely used for
+embedded programming and applications.
+</p>
+<p>
+This SRFI provides safe high level wrappers for raw, no echo etc.
+terminal modes for use by command-line programs and textual user
+interfaces, and a procedure to set a serial line's characteristics
+such as its baud rate.
+</p>
+<p>
+These two disparate use cases are bundled together in one SRFI because
+the complicated low level infrastructure for implementing either is
+roughly the same, except for different sets of constants, which are
+presumably cheap to implement.
+</p>
+<p>
+This SRFI depends on SRFI 198, Foreign Interface Error Handling.
+Various procedures in SRFI 170, from which it was forked off of, may
+be useful in concert with it.
+</p>
+
+
+<h2>Specification</h2>
+
+<h3>Error handling</h3>
+
+<p>
+The procedures of this SRFI signal an exception when the underlying
+system calls fail, as documented in
+<a href="https://srfi.schemers.org/srfi-198/srfi-198.html">SRFI 198</a>.
+The failure of system calls is in the <code>'errno</code> collection
+of <code>error-set</code>, and sanity checks before they are called
+are in <code>'error</code>.
+</p>
+
+
+<h3>Miscellaneous procedures</h3>
+
+<p>See also the <code>terminal?</code> procedure in
+<a href="https://srfi.schemers.org/srfi-170/srfi-170.html">SRFI 170</a>,
+which returns <code>#t</code> if the supplied port argument is a terminal.
+</p>
+
+<code>(terminal-file-name <i>port</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>string</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>ttyname()</code>
+<blockquote>
+<p>
+The argument <i>port</i> must be open on a terminal.
+Returns the file name of the terminal.
+</p>
+<pre class="example">
+(terminal-file-name &lt;a-serial-line-port&gt;) &rArr; "/dev/ttyS0"
+</pre>
+</blockquote>
+
+
+<h3>Serial line manipulation</h3>
+
+<code>(stty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
+<blockquote>
+<p>
+Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
+extended to allow specifying the special device file to be
+manipulated, here as associated to a port.
+</p>
+<p>
+</p>
+The supported arguments are:
+<p>
+</p>
+[<i>To be determined.</i>]
+<p>
+<pre class="example">
+(stty &lt;port-for-a-serial-device&gt; 9600) &rArr; <i>undefined</i>, sets baud rate to 9600.
+</pre>
+</blockquote>
+
+
+<h3>Safe terminal I/O primitives</h3>
+
+<p>
+The following procedures use <code>dynamic-wind</code> when executing
+their <code><i>proc</i></code> procedure argument.
+If <i><code>proc</code>'s</i> dynamic extent is escaped, the terminal
+mode changes of the containing <code>with-</code>
+or <code>without-</code> procedure are undone, but if
+<i><code>proc</code>'s</i> dynamic extent is re-entered, the terminal
+mode changes of the containing procedure are restored to their
+previous state.  They all use P<small>OSIX</small>
+<code>tcgetattr()</code> and <code>tcsetattr()</code>; see also
+the <code>stty</code> command.
+</p>
+
+<p>
+The general paradigm for using <code>with-raw-mode</code>
+and <code>with-rare-mode</code> is to set up your application, then
+run it in the <code><i>proc</i></code> provided to them, a procedure
+that takes the same port arguments in the same order as the
+containing <code>with-</code> or <code>without-</code> procedure.
+When inside <code><i>proc</i></code>, <code>with-cooked-mode</code>
+can be used for a temporarily escape, for instance to a shell.
+The <code>without-echo</code> procedure is an exception in that it's
+generally used to enter a password or passphrase.  The procedures
+return the values that <code><i>proc</i></code> returns.
+</p>
+
+<code>(with-raw-mode <i>input-port output-port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ICANON -IEXTEN -ISIG -BRKINT -ICRNL -INPCK -ISTRIP -IXON -CSIZE -PARENB CS8 -OPOST VMIN=<i>min</i> VTIME=<i>time</i></code>
+<blockquote>
+<p>
+The port arguments must be opened on a terminal.
+The terminal is set to raw mode during the dynamic execution of <code>proc</code>
+and then is restored to canonical "cooked" mode.
+The effect of the <i>min</i> and <i>time</i> arguments is that any
+reads done on the terminal while raw mode is in effect will return to
+the caller after <i>min</i> bytes have been read or <i>time</i>
+deciseconds (1/10ths of a second) have elapsed, whichever comes first.
+Therefore, it makes no sense to use any read operation on the terminal
+except <code>read-char</code> or <code>read-string</code>,
+which read a fixed number of characters.
+No character is given special handling; all are passed to the
+application exactly as received.
+Echoing of input is disabled on the terminal during the execution
+of <code>proc</code>.
+</p>
+<pre class="example">
+(with-raw-mode (current-input-port) (current-output-port)
+               2 50
+               (lambda (x y) (read-char) (read-char))) &rArr; #\x03
+</pre>
+</blockquote>
+
+<code>(with-rare-mode <i>input-port output-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ICANON -ECHO VMIN=1 VTIME=0</code>
+<blockquote>
+<p>
+The port arguments must be opened on a terminal.
+The terminal is set to "rare", also known as cbreak mode during the
+dynamic execution of <code>proc</code>, and then is restored to
+canonical "cooked" mode.
+Just as in canonical mode, any read operation on the terminal
+will wait until characters are received, unlike raw mode.
+However, no characters are given special interpretation except
+the characters that send signals (by default, Ctrl-C and Ctrl-\).
+Echoing of input is disabled on the terminal during the execution
+of <code>proc</code>.
+</p>
+<pre class="example">
+(with-rare-mode (current-input-port) (current-output-port)
+                (lambda (x y) (read-char))) &rArr; #\newline
+</pre>
+</blockquote>
+
+<code>(with-cooked-mode <i>input-port output-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty ~~~FIX_ME</code>
+<blockquote>
+<p>
+The port arguments must be opened on a terminal.
+The terminal is set to canonical "cooked" during the dynamic execution
+of <code>proc</code>, and then is restored to the previous mode.
+In canonical mode, any read operation on the terminal will wait until
+characters are received, and no characters are given special
+interpretation.
+The characters that send signals (by default, Ctrl-C and Ctrl-\) may
+well terminate the instance of Scheme you are using, so it is wise to
+quickly switch to a subprocess such as a shell.
+</p>
+<pre class="example">
+~~~FIX_ME add example
+</pre>
+</blockquote>
+
+<code>(without-echo <i>input-port output-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ECHOE -ECHOK -ECHONL</code>&nbsp;
+<blockquote>
+<p>
+The port arguments must be opened on a terminal.
+Echoing of input is disabled on the terminal during the execution of <code>proc</code>
+and then is re-enabled.
+</p>
+<pre class="example">
+(without-echo (current-input-port) (current-output-port)
+              (lambda (x) (read-string 8 (current-input-port)))) &rArr; "12345678"
+</pre>
+</blockquote>
+
+
+<h2>Implementation</h2>
+
+<p>
+A Chibi Scheme sample implementation will be created after the API
+settles down.
+</p>
+
+
+<h2>Acknowledgments</h2>
+
+<!--
+<p>
+[~~~FIX_ME-after-research conceived the <code>with-*</code>
+and <code>without-echo</code> procedures, particularly their operating
+paradigm which minimizes the classic risk of leaving a terminal in an
+odd, often non-echoing state.
+</p>
+-->
+
+<h2>Copyright</h2>
+<p>Copyright &copy; (2020) John Cowan and Harold Ancell.</p>
+
+<p>
+  Permission is hereby granted, free of charge, to any person
+  obtaining a copy of this software and associated documentation files
+  (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge,
+  publish, distribute, sublicense, and/or sell copies of the Software,
+  and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:</p>
+
+<p>
+  The above copyright notice and this permission notice (including the
+  next paragraph) shall be included in all copies or substantial
+  portions of the Software.</p>
+<p>
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.</p>
+
+  <hr>
+  <address>Editor: <a href="mailto:srfi-editors+at+srfi+dot+schemers+dot+org">Arthur A. Gleckler</a></address></body></html>
