@@ -22,9 +22,14 @@ by John Cowan (author) and Harold Ancell (author and editor)
 
 <p>
 This SRFI describes procedures for command-line and terminal interface
-programs to use to safely change and reset terminal modes, for example
-from cooked to raw and back, and for serial-line device manipulation
-for interfacing with embedded hardware and the like.
+programs to safely change and reset terminal modes, for example from
+cooked to raw and back, and for serial-line device manipulation for
+interfacing with embedded hardware and the like.  It is intendedto
+provide all the
+<a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html">termios struct</a>
+functionalty a modern Scheme programmer might desire by supplying an
+<a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/stty.html">stty</a>
+procedure, and abstrations on top of it.
 </p>
 
 
