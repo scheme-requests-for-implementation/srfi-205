@@ -24,12 +24,14 @@ by John Cowan (author) and Harold Ancell (author and editor)
 This SRFI describes procedures for command-line and terminal interface
 programs to safely change and reset terminal modes, for example from
 cooked to raw and back, and for serial-line device manipulation for
-interfacing with embedded hardware and the like.  It is intendedto
-provide all the
-<a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html">termios struct</a>
-functionalty a modern Scheme programmer might desire by supplying an
+interfacing with embedded hardware and the like.
+</p>
+<p>
+It is intended to provide all the
+<a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html">termios structure</a>
+functionality a modern Scheme programmer might desire by supplying a
 <a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/stty.html">stty</a>
-procedure, and abstrations on top of it.
+procedure, and simple abstractions on top of it.
 </p>
 
 
@@ -37,14 +39,33 @@ procedure, and abstrations on top of it.
 
 <ul>
 <li><p>
-How to prescribe and/or enforce safe use of <code>with-cooked-mode</code>.
+Is the decision to put all termios manipulation in a single SRFI correct?
 </p></li>
 <li><p>
-Whether to include serial line procedures in this or a separate SRFI.
+Are there any modern needs for exposed <code>stty(1)</code>
+functionality besides serial-line manipulation for communication with
+other systems?  (This SRFI does not propose to support retrocomputing
+with real serial-line terminals.)
 </p></li>
 <li><p>
-Whether to support <code>stty(1)</code>-style getting and setting of
-all of a special device's modes.
+Exactly which <code>stty(1)</code> arguments are needed for modern
+serial-line use, such as with embedded computing?
+</p></li>
+<li><p>
+<code>with-cooked-mode</code> exists to "shell out" from a program
+that's already executing the thunk handed
+to <code>with-rare-mode</code> or <code>with-raw-mode</code>.  Does it
+need arguments in addition to the standard triplet of input, output,
+and error ports to do this safely and securely?
+</p></li>
+<li><p>
+Is there any way to enforce, rather than prescribe, safe use
+of <code>with-cooked-mode</code>?  If so, should that be done for the
+good of users?
+</p></li>
+<li><p>
+What are the best recommended <code>stty(1)</code> settings for
+<code>with-cooked-mode</code>?
 </p></li>
 </ul>
 
@@ -64,19 +85,25 @@ embedded programming and applications.
 <p>
 This SRFI provides safe high-level wrappers for raw, no echo, etc.
 terminal modes for use by command-line programs and textual user
-interfaces, and a procedure to set a serial line's characteristics
-such as its baud rate.
+interfaces (TUIs), and a <code>stty(1)</code> style procedure to set a
+serial line's characteristics such as its baud rate.
 </p>
 <p>
 These two disparate use cases are bundled together in one SRFI because
 the complicated low-level infrastructure for implementing either is
 roughly the same, except for different sets of constants, which are
-presumably cheap to implement.
+presumably cheap to implement.  If you first implement
+<code>stty</code>, the special terminal mode procedures can be
+simply and elegantly built on top of it with a few lines of code.
 </p>
 <p>
-This SRFI depends on SRFI 198, Foreign Interface Error Handling.
-Various procedures in SRFI 170, from which it was forked off of, may
-be useful in concert with it.
+This SRFI depends on
+<a href="https://srfi.schemers.org/srfi-198/srfi-198.html">SRFI 198: Foreign Interface Error Handling.</a>
+Various procedures in
+<a href="https://srfi.schemers.org/srfi-170/srfi-170.html">SRFI 170: POSIX API</a>,
+from which it was forked off of, are needed or may be useful in
+concert with it.  It is based on the
+<a href="https://pubs.opengroup.org/onlinepubs/9699919799/mindex.html">2018 edition of P<small>OSIX</small> IEEE Std 1003.1-2017&trade;</a>.
 </p>
 
 
@@ -85,12 +112,10 @@ be useful in concert with it.
 <h3>Error handling</h3>
 
 <p>
-The procedures of this SRFI signal an exception when the underlying
-system calls fail, as documented in
-<a href="https://srfi.schemers.org/srfi-198/srfi-198.html">SRFI 198</a>.
-The failure of system calls is in the <code>'errno</code> collection
-of <code>error-set</code>, and sanity checks before they are called
-are in <code>'error</code>.
+The procedures of this SRFI raise a SRFI 198 exception when an
+underlying system call fails, as documented in SRFI 170.  These are in
+the <code>'errno</code> error set collection, and sanity checks before
+they are called are in <code>'error</code>.
 </p>
 
 
@@ -120,7 +145,7 @@ Returns the file name of the terminal.
 <p>
 Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
 extended to allow specifying the special device file to be
-manipulated, here as associated to a port.
+manipulated, here associated with a port.
 </p>
 <p>
 </p>
@@ -163,7 +188,7 @@ generally used to enter a password or passphrase.  The procedures
 return the values that <code><i>proc</i></code> returns.
 </p>
 
-<code>(with-raw-mode <i>input-port output-port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ICANON -IEXTEN -ISIG -BRKINT -ICRNL -INPCK -ISTRIP -IXON -CSIZE -PARENB CS8 -OPOST VMIN=<i>min</i> VTIME=<i>time</i></code>
+<code>(with-raw-mode <i>input-port output-port error-port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ICANON -IEXTEN -ISIG -BRKINT -ICRNL -INPCK -ISTRIP -IXON -CSIZE -PARENB CS8 -OPOST VMIN=<i>min</i> VTIME=<i>time</i></code>
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
@@ -182,7 +207,7 @@ Echoing of input is disabled on the terminal during the execution
 of <code>proc</code>.
 </p>
 <pre class="example">
-(with-raw-mode (current-input-port) (current-output-port)
+(with-raw-mode (current-input-port) (current-output-port) (current-error-port)
                2 50
                (lambda (x y) (read-char) (read-char))) &rArr; #\x03
 </pre>
@@ -203,7 +228,7 @@ Echoing of input is disabled on the terminal during the execution
 of <code>proc</code>.
 </p>
 <pre class="example">
-(with-rare-mode (current-input-port) (current-output-port)
+(with-rare-mode (current-input-port) (current-output-port) (current-error-port)
                 (lambda (x y) (read-char))) &rArr; #\newline
 </pre>
 </blockquote>
@@ -212,8 +237,9 @@ of <code>proc</code>.
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
-The terminal is set to canonical "cooked" during the dynamic execution
-of <code>proc</code>, and then is restored to the previous mode.
+The terminal is set to canonical "cooked" mode during the dynamic
+execution of <code>proc</code>, and then is restored to the previous
+mode.
 In canonical mode, any read operation on the terminal will wait until
 characters are received, and no characters are given special
 interpretation.
@@ -222,8 +248,8 @@ well terminate the instance of Scheme you are using, so it is wise to
 quickly switch to a subprocess such as a shell.
 </p>
 <pre class="example">
-(with-cooked-mode (current-input-port) (current-output-port) (current-error-port)
-                  (lambda (x y z) (&lt;spawn-shell-process&gt x y z))) &rArr; 0
+(with-cooked-mode &lt;input-port&gt; &lt;output-port&gt; &lt;error-port&gt;
+                  (lambda (x y z) (&lt;spawn-shell-process&gt; x y z))) &rArr; 0
 </pre>
 </blockquote>
 
