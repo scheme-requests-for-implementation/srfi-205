@@ -61,22 +61,6 @@ with real serial-line terminals.)
 Exactly which <code>stty(1)</code> arguments are needed for modern
 serial-line use, such as with embedded computing?
 </p></li>
-<li><p>
-<code>with-cooked-mode</code> exists to "shell out" from a program
-that's already executing the thunk handed
-to <code>with-rare-mode</code> or <code>with-raw-mode</code>.  Does it
-need arguments in addition to the standard triplet of input, output,
-and error ports to do this safely and securely?
-</p></li>
-<li><p>
-Is there any way to enforce, rather than prescribe, safe use
-of <code>with-cooked-mode</code>?  If so, should that be done for the
-good of users?
-</p></li>
-<li><p>
-What are the best recommended <code>stty(1)</code> settings for
-<code>with-cooked-mode</code>?
-</p></li>
 </ul>
 
 
@@ -156,20 +140,82 @@ Returns the file name of the terminal.
 Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
 extended to allow specifying the special device file to be
 manipulated, here associated with a port.
+At least the following symbolic arguments must be supported
+(arguments on the same line are mutually exclusive):
 </p>
+<ul>
+<li><code>brkint</code> <code>-brkint</code></li>
+<li><code>bs0</code> <code>bs1</code></li>
+<li><code>clocal</code> <code>-clocal</code></li>
+<li><code>cr0</code> <code>cr1</code> <code>cr2</code> <code>cr3</code></li>
+<li><code>cread</code> <code>-cread</code></li>
+<li><code>cs5</code> <code>cs6</code> <code>cs7</code> <code>cs8</code></li>
+<li><code>cstopb</code> <code>-cstopb</code></li>
+<li><code>echo</code> <code>-echo</code></li>
+<li><code>echoe</code> <code>-echoe</code></li>
+<li><code>echok</code> <code>-echok</code></li>
+<li><code>echonl</code> <code>-echonl</code></li>
+<li><code>ff0</code> <code>ff1</code></li>
+<li><code>hup</code> <code>-hup</code></li>
+<li><code>hupcl</code> <code>-hupcl</code></li>
+<li><code>icanon</code> <code>-icanon</code></li>
+<li><code>icrnl</code> <code>-icrnl</code></li>
+<li><code>iexten</code> <code>-iexten</code></li>
+<li><code>ignbrk</code> <code>-ignbrk</code></li>
+<li><code>igncr</code> <code>-igncr</code></li>
+<li><code>ignpar</code> <code>-ignpar</code></li>
+<li><code>inlcr</code> <code>-inlcr</code></li>
+<li><code>inpck</code> <code>-inpck</code></li>
+<li><code>isig</code> <code>-isig</code></li>
+<li><code>istrip</code> <code>-istrip</code></li>
+<li><code>ixany</code> <code>-ixany</code></li>
+<li><code>ixoff</code> <code>-ixoff</code></li>
+<li><code>ixon</code> <code>-ixon</code></li>
+<li><code>nl0</code> <code>nl1</code></li>
+<li><code>noflsh</code> <code>-noflsh</code></li>
+<li><code>ocrnl</code> <code>-ocrnl</code></li>
+<li><code>ofdel</code> <code>-ofdel</code></li>
+<li><code>ofill</code> <code>-ofill</code></li>
+<li><code>onlcr</code> <code>-onlcr</code></li>
+<li><code>onlret</code> <code>-onlret</code></li>
+<li><code>onocr</code> <code>-onocr</code></li>
+<li><code>opost</code> <code>-opost</code></li>
+<li><code>parenb</code> <code>-parenb</code></li>
+<li><code>parmrk</code> <code>-parmrk</code></li>
+<li><code>parodd</code> <code>-parodd</code></li>
+<li><code>tab0</code> <code>tab1</code> <code>tab2</code> <code>tab3</code></li>
+<li><code>tabs</code> <code>-tabs</code></li>
+<li><code>tostop</code> <code>-tostop</code></li>
+</ul>
 <p>
-</p>
-The supported arguments are:
-<p>
-</p>
-[<i>To be determined.</i>]
-<p>
-<pre class="example">
-(stty &lt;port-for-a-serial-device&gt; 9600) &rArr; <i>undefined</i>, sets baud rate to 9600.
-</pre>
+In addition, two-element list arguments of the following forms must
+also be supported:
+<ul>
+<li><code>(ispeed </code><i>number</i><code>)</code> where
+<i>number</i> is one of
+0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200.</li>
+<li><code>(ispeed </code><i>number</i><code>)</code> where
+number is one of the same set.</li>
+<li><code>(</code><i>symbol string</i><code>)</code>
+where the symbol is one of the following:
+<code>eof</code>,
+<code>eol</code>,
+<code>erase</code>,
+<code>intr</code>,
+<code>kill</code>,
+<code>quit</code>,
+<code>susp</code>,
+<code>start</code>.
+</li>
+</ul>
 </blockquote>
 
+<code>(gtty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr()</code>
+<blockquote>
 
+Returns a list of symbols and two-element lists
+that are acceptable to <code>stty</code>.
+</blockquote>
 <h3>Safe terminal I/O primitives</h3>
 
 <p>
@@ -198,7 +244,7 @@ generally used to enter a password or passphrase.  The procedures
 return the values that <code><i>proc</i></code> returns.
 </p>
 
-<code>(with-raw-mode <i>input-port output-port error-port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ICANON -IEXTEN -ISIG -BRKINT -ICRNL -INPCK -ISTRIP -IXON -CSIZE -PARENB CS8 -OPOST VMIN=<i>min</i> VTIME=<i>time</i></code>
+<code>(with-raw-mode <i>port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ICANON -IEXTEN -ISIG -BRKINT -ICRNL -INPCK -ISTRIP -IXON -CSIZE -PARENB CS8 -OPOST VMIN=<i>min</i> VTIME=<i>time</i></code>
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
@@ -217,13 +263,12 @@ Echoing of input is disabled on the terminal during the execution
 of <code>proc</code>.
 </p>
 <pre class="example">
-(with-raw-mode (current-input-port) (current-output-port) (current-error-port)
-               2 50
+(with-raw-mode ((current-input-port) 2 50
                (lambda (x y) (read-char) (read-char))) &rArr; #\x03
 </pre>
 </blockquote>
 
-<code>(with-rare-mode <i>input-port output-port error-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ICANON -ECHO VMIN=1 VTIME=0</code>
+<code>(with-rare-mode <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ICANON -ECHO VMIN=1 VTIME=0</code>
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
@@ -238,12 +283,12 @@ Echoing of input is disabled on the terminal during the execution
 of <code>proc</code>.
 </p>
 <pre class="example">
-(with-rare-mode (current-input-port) (current-output-port) (current-error-port)
+(with-rare-mode (current-input-port)
                 (lambda (x y) (read-char))) &rArr; #\newline
 </pre>
 </blockquote>
 
-<code>(with-cooked-mode <i>input-port output-port error-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty CREAD BRKINT ICRNL IMAXBEL OPOST ONCR ISIG ICANON ECHO ECHOE ECHOCTL ECHOEK -IGNBRK -IGNCR -IXOFF -IXANY -INLCR -OCRNL -ONOCR -ONLRET -ECHONL -NOFLSH -TOSTOP -ECHOPRT</code>
+<code>(with-cooked-mode <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty CREAD BRKINT ICRNL IMAXBEL OPOST ONCR ISIG ICANON ECHO ECHOE ECHOCTL ECHOEK -IGNBRK -IGNCR -IXOFF -IXANY -INLCR -OCRNL -ONOCR -ONLRET -ECHONL -NOFLSH -TOSTOP -ECHOPRT</code>
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
@@ -258,12 +303,12 @@ well terminate the instance of Scheme you are using, so it is wise to
 quickly switch to a subprocess such as a shell.
 </p>
 <pre class="example">
-(with-cooked-mode &lt;input-port&gt; &lt;output-port&gt; &lt;error-port&gt;
+(with-cooked-mode (current-input-port)
                   (lambda (x y z) (&lt;spawn-shell-process&gt; x y z))) &rArr; 0
 </pre>
 </blockquote>
 
-<code>(without-echo <i>input-port output-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ECHOE -ECHOK -ECHONL</code>&nbsp;
+<code>(without-echo <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ECHOE -ECHOK -ECHONL</code>&nbsp;
 <blockquote>
 <p>
 The port arguments must be opened on a terminal.
@@ -271,7 +316,7 @@ Echoing of input is disabled on the terminal during the execution of <code>proc<
 and then is re-enabled.
 </p>
 <pre class="example">
-(without-echo (current-input-port) (current-output-port)
+(without-echo (current-input-port)
               (lambda (x) (read-string 8 (current-input-port)))) &rArr; "12345678"
 </pre>
 </blockquote>
