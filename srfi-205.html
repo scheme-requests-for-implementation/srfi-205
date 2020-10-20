@@ -179,7 +179,7 @@ In terms of the implementation model,
 the current terminal state is retrieved and a copy of it is pushed on the stack
 as a state object.
 Then the state object is modified by disabling the following flags:
-<code>ECHO ICANON IEXTEN ISIG BRKINT ICRNL INPCK ISTRIP IXON CSIZE PARENB OPOST</code>.
+<code>ECHO ECHOE ECHOK ICANON IEXTEN ISIG BRKINT ICRNL INPCK ISTRIP IXON CSIZE PARENB OPOST</code>.
 The <code>CS8</code> setting is enabled, and the <code>VMIN</code> and <code>VTIME</code> settings
 are set using <i>min</i> and <i>time</i> respectively.
 Then the state object is written back to the terminal
@@ -209,7 +209,7 @@ In terms of the implementation model,
 the current terminal state is retrieved and a copy of it is pushed on the stack
 as a state object.
 Then the state object is modified by disabling the following flags:
-<code>ECHO ICANON</code>.
+<code>ECHO ECHOE ECHOK ICANON</code>.
 The <code>CS8</code> setting is enabled, and the <code>VMIN</code> and <code>VTIME</code> settings
 are set using <i>min</i> and <i>time</i> respectively.
 Then the state object is written back to the terminal
@@ -233,7 +233,7 @@ In terms of the implementation model,
 the state object at the bottom of the stack is retrieved and a copy of it is pushed on the stack.
 Then another copy of the state object is modified by enabling the following flags
 (which are probably already enabled, but we make sure)
-<code>ECHO ICANON IEXTEN ISIG BRKINT ICRNL INPCK ISTRIP IXON CSIZE PARENB OPOST</code>,
+<code>ECHO ECHOE ECHOK ICANON IEXTEN ISIG BRKINT ICRNL INPCK ISTRIP IXON CSIZE PARENB OPOST</code>,
 and the <code>CS8</code> setting is enabled.
 Then the modified state object is written back to the terminal
 and the implementation model is followed thereafter.
@@ -277,7 +277,11 @@ and the implementation model is followed thereafter.
 Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
 extended to allow specifying the special device file to be
 manipulated, here associated with a port.
-At least the following symbolic arguments must be supported
+At least the following arguments must be supported,
+although they may or may not have the expected result:
+<ul>
+<li>
+Symbol arguments
 (arguments on the same line are mutually exclusive):
 </p>
 <ul>
@@ -324,17 +328,20 @@ At least the following symbolic arguments must be supported
 <li><code>tabs</code> <code>-tabs</code></li>
 <li><code>tostop</code> <code>-tostop</code></li>
 </ul>
+</li>
+<li>
 <p>
-In addition, two-element list arguments of the following forms must
-also be supported:
-<ul>
-<li><code>(ispeed </code><i>number</i><code>)</code> where
-<i>number</i> is one of
-0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200.</li>
-<li><code>(ispeed </code><i>number</i><code>)</code> where
-number is one of the same set.</li>
-<li><code>(</code><i>symbol string</i><code>)</code>
-where the symbol is one of the following:
+Exact integer arguments
+representing transmission/reception speeds in bits per second:
+0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200,
+where 0 means "hang up".
+</p>
+</li>
+<li>
+Two-element list arguments of the form
+<code>(</code><i>symbol char</i><code>)</code>
+where the symbol represents the system-independent name of a character
+and the char represents the actual character:
 <code>eof</code>,
 <code>eol</code>,
 <code>erase</code>,
