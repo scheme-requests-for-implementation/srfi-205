@@ -229,7 +229,7 @@ and then is restored to the previous mode.
 Echoing of input is enabled on the terminal during the execution
 of <code>proc</code>.
 </p>
-In terms of the implementation model,
+<p>In terms of the implementation model,
 the state object at the bottom of the stack is retrieved and a copy of it is pushed on the stack.
 Then another copy of the state object is modified by enabling the following flags
 (which are probably already enabled, but we make sure)
@@ -243,7 +243,6 @@ and the implementation model is followed thereafter.
 (with-cooked-mode (current-input-port)
                   (lambda (x y z) (&lt;spawn-shell-process&gt; x y z))) &rArr; 0
 </pre>
-</blockquote>
 
 <code>(without-echo <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>
  -ECHO -ECHOE -ECHOK -ECHONL</code>&nbsp;
@@ -281,7 +280,7 @@ At least the following arguments must be supported,
 although they may or may not have the expected result:
 <ul>
 <li>
-Symbol arguments
+<p>Symbol arguments
 (arguments on the same line are mutually exclusive):
 </p>
 <ul>
