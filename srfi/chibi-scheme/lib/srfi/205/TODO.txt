@@ -1,0 +1,26 @@
+For each release:
+
+ * Fix errors reported by W3C HTML Validator.
+ * Fix spelling.
+
+----------------
+
+Consider adding miscellaneous scsh procedures per
+https://srfi-email.schemers.org/srfi-205/msg/14647343/
+
+ * (open-control-tty tty-name [flags])
+ * (become-session-leader)
+ * (tty-process-group fd/port/fname)
+ * (set-tty-process-group fd/port/fname pgrp)
+ * (control-tty-file-name)
+
+----------------
+
+From Lassi, "Does SRFI 205 cover serial port?" discussion:
+
+One thing currently missing from 205 is TIOCGWINSZ (window size):
+
+struct winsize ws;
+if (ioctl(fd, TIOCGWINSZ, &ws) == -1) error();
+width  = ws.ws_col;
+height = ws.ws_row;

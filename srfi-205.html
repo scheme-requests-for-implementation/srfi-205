@@ -61,22 +61,6 @@ with real serial-line terminals.)
 Exactly which <code>stty(1)</code> arguments are needed for modern
 serial-line use, such as with embedded computing?
 </p></li>
-<li><p>
-<code>with-cooked-mode</code> exists to "shell out" from a program
-that's already executing the thunk handed
-to <code>with-rare-mode</code> or <code>with-raw-mode</code>.  Does it
-need arguments in addition to the standard triplet of input, output,
-and error ports to do this safely and securely?
-</p></li>
-<li><p>
-Is there any way to enforce, rather than prescribe, safe use
-of <code>with-cooked-mode</code>?  If so, should that be done for the
-good of users?
-</p></li>
-<li><p>
-What are the best recommended <code>stty(1)</code> settings for
-<code>with-cooked-mode</code>?
-</p></li>
 </ul>
 
 
@@ -96,10 +80,10 @@ embedded programming and applications.
 This SRFI provides safe high-level wrappers for raw, no echo, etc.
 terminal modes for use by command-line programs and textual user
 interfaces (TUIs), and a <code>stty(1)</code> style procedure to set a
-serial line's characteristics such as its baud rate.
+terminal's characteristics such as its baud rate.
 </p>
 <p>
-These two disparate use cases are bundled together in one SRFI because
+These two use cases are bundled together in one SRFI because
 the complicated low-level infrastructure for implementing either is
 roughly the same, except for different sets of constants, which are
 presumably cheap to implement.  If you first implement
@@ -121,68 +105,43 @@ concert with it.  It is based on the
 
 <h3>Error handling</h3>
 
-<p>
-The procedures of this SRFI raise a SRFI 198 exception when an
-underlying system call fails, as documented in SRFI 170.  These are in
-the <code>'errno</code> error set collection, and sanity checks before
-they are called are in <code>'error</code>.
+<p>Throughout this specification, it is an error if
+<i>port</i> is not open on a terminal.
 </p>
 
-
-<h3>Miscellaneous procedures</h3>
-
-<p>See also the <code>terminal?</code> procedure in
-<a href="https://srfi.schemers.org/srfi-170/srfi-170.html">SRFI 170</a>,
-which returns <code>#t</code> if the supplied port argument is a terminal.
-</p>
-
-<code>(terminal-file-name <i>port</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>string</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>ttyname()</code>
-<blockquote>
 <p>
-The argument <i>port</i> must be open on a terminal.
-Returns the file name of the terminal.
+The procedures of this SRFI raise an exception when an
+underlying system call fails.
 </p>
-<pre class="example">
-(terminal-file-name &lt;a-serial-line-port&gt;) &rArr; "/dev/ttyS0"
-</pre>
-</blockquote>
-
-
-<h3>Serial line manipulation</h3>
-
-<code>(stty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
-<blockquote>
-<p>
-Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
-extended to allow specifying the special device file to be
-manipulated, here associated with a port.
-</p>
-<p>
-</p>
-The supported arguments are:
-<p>
-</p>
-[<i>To be determined.</i>]
-<p>
-<pre class="example">
-(stty &lt;port-for-a-serial-device&gt; 9600) &rArr; <i>undefined</i>, sets baud rate to 9600.
-</pre>
-</blockquote>
-
 
 <h3>Safe terminal I/O primitives</h3>
 
 <p>
-The following procedures use <code>dynamic-wind</code> when executing
-their <code><i>proc</i></code> procedure argument.
-If <i><code>proc</code>'s</i> dynamic extent is escaped, the terminal
-mode changes of the containing <code>with-</code>
-or <code>without-</code> procedure are undone, but if
-<i><code>proc</code>'s</i> dynamic extent is re-entered, the terminal
-mode changes of the containing procedure are restored to their
-previous state.  They all use P<small>OSIX</small>
-<code>tcgetattr()</code> and <code>tcsetattr()</code>; see also
-the <code>stty</code> command.
+The following procedures conform to an implementation model
+that represents how they may be implemented.
+A <i>state object</i> is a hidden object that represents
+the complete state of a terminal line
+as retrieved by <code>tcgetattr()</code>
+and set by <code>tcsetattr()</code>.
+An implementation of this SRFI maintains a stack of state objects;
+a new element can be pushed, the top element can be popped, and the bottom
+element can be retrieved without popping it.
+The stack is initialized with a single state object representing
+the state of the terminal when the program starts.
+In practice this may be done on the first call to any of this
+SRFI's procedures.
+</p>
+<p>
+The procedures use <code>dynamic-wind</code> when executing
+their <i>proc</i> argument.
+In the <i>before-thunk</i> the current terminal state is fetched
+from a specified place and is pushed on the stack.  Then specified flags
+are turned on or off, and the terminal is set according to the resulting state.
+In the <i>after-thunk</i> a terminal state is popped from the stack
+and the terminal is set accordingly.
+If <i><code>proc</code>'s</i> dynamic extent is escaped,
+the <i>after-thunk</i> is executed, and if control returns to the
+dynamic extent, the <i>before-thunk</i> is executed.
 </p>
 
 <p>
@@ -191,19 +150,18 @@ and <code>with-rare-mode</code> is to set up your application, then
 run it in the <code><i>proc</i></code> provided to them, a procedure
 that takes the same port arguments in the same order as the
 containing <code>with-</code> or <code>without-</code> procedure.
-When inside <code><i>proc</i></code>, <code>with-cooked-mode</code>
-can be used for a temporarily escape, for instance to a shell.
+Inside <code><i>proc</i></code>, <code>with-cooked-mode</code>
+can be used for a temporary escape, for instance to a shell.
 The <code>without-echo</code> procedure is an exception in that it's
 generally used to enter a password or passphrase.  The procedures
 return the values that <code><i>proc</i></code> returns.
 </p>
 
-<code>(with-raw-mode <i>input-port output-port error-port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ICANON -IEXTEN -ISIG -BRKINT -ICRNL -INPCK -ISTRIP -IXON -CSIZE -PARENB CS8 -OPOST VMIN=<i>min</i> VTIME=<i>time</i></code>
+<code>(with-raw-mode <i>port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
 <blockquote>
 <p>
-The port arguments must be opened on a terminal.
 The terminal is set to raw mode during the dynamic execution of <code>proc</code>
-and then is restored to canonical "cooked" mode.
+and then is restored to the previous mode.
 The effect of the <i>min</i> and <i>time</i> arguments is that any
 reads done on the terminal while raw mode is in effect will return to
 the caller after <i>min</i> bytes have been read or <i>time</i>
@@ -216,20 +174,29 @@ application exactly as received.
 Echoing of input is disabled on the terminal during the execution
 of <code>proc</code>.
 </p>
+<p>
+In terms of the implementation model,
+the current terminal state is retrieved and a copy of it is pushed on the stack
+as a state object.
+Then the state object is modified by disabling the following flags:
+<code>ECHO ECHOE ECHOK ICANON IEXTEN ISIG BRKINT ICRNL INPCK ISTRIP IXON CSIZE PARENB OPOST</code>.
+The <code>CS8</code> setting is enabled, and the <code>VMIN</code> and <code>VTIME</code> settings
+are set using <i>min</i> and <i>time</i> respectively.
+Then the state object is written back to the terminal
+and the implementation model is followed thereafter.
+</p>
 <pre class="example">
-(with-raw-mode (current-input-port) (current-output-port) (current-error-port)
-               2 50
+(with-raw-mode ((current-input-port) 2 50
                (lambda (x y) (read-char) (read-char))) &rArr; #\x03
 </pre>
 </blockquote>
 
-<code>(with-rare-mode <i>input-port output-port error-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ICANON -ECHO VMIN=1 VTIME=0</code>
+<code>(with-rare-mode <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
 <blockquote>
 <p>
-The port arguments must be opened on a terminal.
-The terminal is set to "rare", also known as cbreak mode, during the
+The terminal is set to rare (also known as cbreak) mode during the
 dynamic execution of <code>proc</code>, and then is restored to
-canonical "cooked" mode.
+the previous mode.
 Just as in canonical mode, any read operation on the terminal
 will wait until characters are received, unlike raw mode.
 However, no characters are given special interpretation except
@@ -237,45 +204,234 @@ the characters that send signals (by default, Ctrl-C and Ctrl-\).
 Echoing of input is disabled on the terminal during the execution
 of <code>proc</code>.
 </p>
+<p>
+In terms of the implementation model,
+the current terminal state is retrieved and a copy of it is pushed on the stack
+as a state object.
+Then the state object is modified by disabling the following flags:
+<code>ECHO ECHOE ECHOK ICANON</code>.
+The <code>CS8</code> setting is enabled, and the <code>VMIN</code> and <code>VTIME</code> settings
+are set using <i>min</i> and <i>time</i> respectively.
+Then the state object is written back to the terminal
+and the implementation model is followed thereafter.
+</p>
 <pre class="example">
-(with-rare-mode (current-input-port) (current-output-port) (current-error-port)
+(with-rare-mode (current-input-port)
                 (lambda (x y) (read-char))) &rArr; #\newline
 </pre>
 </blockquote>
 
-<code>(with-cooked-mode <i>input-port output-port error-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty CREAD BRKINT ICRNL IMAXBEL OPOST ONCR ISIG ICANON ECHO ECHOE ECHOCTL ECHOEK -IGNBRK -IGNCR -IXOFF -IXANY -INLCR -OCRNL -ONOCR -ONLRET -ECHONL -NOFLSH -TOSTOP -ECHOPRT</code>
+<code>(with-cooked-mode <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
 <blockquote>
 <p>
-The port arguments must be opened on a terminal.
-The terminal is set to canonical "cooked" mode during the dynamic
-execution of <code>proc</code>, and then is restored to the previous
-mode.
-In canonical mode, any read operation on the terminal will wait until
-characters are received, and no characters are given special
-interpretation.
-The characters that send signals (by default, Ctrl-C and Ctrl-\) may
-well terminate the instance of Scheme you are using, so it is wise to
-quickly switch to a subprocess such as a shell.
+The terminal is set to cooked mode during the dynamic execution of <code>proc</code>
+and then is restored to the previous mode.
+Echoing of input is enabled on the terminal during the execution
+of <code>proc</code>.
 </p>
+In terms of the implementation model,
+the state object at the bottom of the stack is retrieved and a copy of it is pushed on the stack.
+Then another copy of the state object is modified by enabling the following flags
+(which are probably already enabled, but we make sure)
+<code>ECHO ECHOE ECHOK ICANON IEXTEN ISIG BRKINT ICRNL INPCK ISTRIP IXON CSIZE PARENB OPOST</code>,
+and the <code>CS8</code> setting is enabled.
+Then the modified state object is written back to the terminal
+and the implementation model is followed thereafter.
+</p>
+</blockquote>
 <pre class="example">
-(with-cooked-mode &lt;input-port&gt; &lt;output-port&gt; &lt;error-port&gt;
+(with-cooked-mode (current-input-port)
                   (lambda (x y z) (&lt;spawn-shell-process&gt; x y z))) &rArr; 0
 </pre>
 </blockquote>
 
-<code>(without-echo <i>input-port output-port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>stty -ECHO -ECHOE -ECHOK -ECHONL</code>&nbsp;
+<code>(without-echo <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>
+ -ECHO -ECHOE -ECHOK -ECHONL</code>&nbsp;
 <blockquote>
 <p>
-The port arguments must be opened on a terminal.
 Echoing of input is disabled on the terminal during the execution of <code>proc</code>
 and then is re-enabled.
 </p>
+<p>
+In terms of the implementation model,
+the current terminal state is retrieved and a copy of it is pushed on the stack
+as a state object.
+Then the state object is modified by disabling the following flags:
+<code>ECHO ECHOE ECHOK</code>.
+The <code>CS8</code> setting is enabled, and the <code>VMIN</code> and <code>VTIME</code> settings
+are set using <i>min</i> and <i>time</i> respectively.
+Then the state object is written back to the terminal
+and the implementation model is followed thereafter.
+</p>
 <pre class="example">
-(without-echo (current-input-port) (current-output-port)
+(without-echo (current-input-port)
               (lambda (x) (read-string 8 (current-input-port)))) &rArr; "12345678"
 </pre>
 </blockquote>
 
+<h3>Low-level terminal manipulation</h3>
+
+<code>(stty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
+<blockquote>
+<p>
+Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
+extended to allow specifying the special device file to be
+manipulated, here associated with a port.
+At least the following arguments must be supported,
+although they may or may not have the expected result:
+<ul>
+<li>
+Symbol arguments
+(arguments on the same line are mutually exclusive):
+</p>
+<ul>
+<li><code>brkint</code> <code>-brkint</code></li>
+<li><code>bs0</code> <code>bs1</code></li>
+<li><code>clocal</code> <code>-clocal</code></li>
+<li><code>cr0</code> <code>cr1</code> <code>cr2</code> <code>cr3</code></li>
+<li><code>cread</code> <code>-cread</code></li>
+<li><code>cs5</code> <code>cs6</code> <code>cs7</code> <code>cs8</code></li>
+<li><code>cstopb</code> <code>-cstopb</code></li>
+<li><code>echo</code> <code>-echo</code></li>
+<li><code>echoe</code> <code>-echoe</code></li>
+<li><code>echok</code> <code>-echok</code></li>
+<li><code>echonl</code> <code>-echonl</code></li>
+<li><code>ff0</code> <code>ff1</code></li>
+<li><code>hup</code> <code>-hup</code></li>
+<li><code>hupcl</code> <code>-hupcl</code></li>
+<li><code>icanon</code> <code>-icanon</code></li>
+<li><code>icrnl</code> <code>-icrnl</code></li>
+<li><code>iexten</code> <code>-iexten</code></li>
+<li><code>ignbrk</code> <code>-ignbrk</code></li>
+<li><code>igncr</code> <code>-igncr</code></li>
+<li><code>ignpar</code> <code>-ignpar</code></li>
+<li><code>inlcr</code> <code>-inlcr</code></li>
+<li><code>inpck</code> <code>-inpck</code></li>
+<li><code>isig</code> <code>-isig</code></li>
+<li><code>istrip</code> <code>-istrip</code></li>
+<li><code>ixany</code> <code>-ixany</code></li>
+<li><code>ixoff</code> <code>-ixoff</code></li>
+<li><code>ixon</code> <code>-ixon</code></li>
+<li><code>nl0</code> <code>nl1</code></li>
+<li><code>noflsh</code> <code>-noflsh</code></li>
+<li><code>ocrnl</code> <code>-ocrnl</code></li>
+<li><code>ofdel</code> <code>-ofdel</code></li>
+<li><code>ofill</code> <code>-ofill</code></li>
+<li><code>onlcr</code> <code>-onlcr</code></li>
+<li><code>onlret</code> <code>-onlret</code></li>
+<li><code>onocr</code> <code>-onocr</code></li>
+<li><code>opost</code> <code>-opost</code></li>
+<li><code>parenb</code> <code>-parenb</code></li>
+<li><code>parmrk</code> <code>-parmrk</code></li>
+<li><code>parodd</code> <code>-parodd</code></li>
+<li><code>tab0</code> <code>tab1</code> <code>tab2</code> <code>tab3</code></li>
+<li><code>tabs</code> <code>-tabs</code></li>
+<li><code>tostop</code> <code>-tostop</code></li>
+</ul>
+</li>
+<li>
+<p>
+Exact integer arguments
+representing transmission/reception speeds in bits per second:
+0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200,
+where 0 means "hang up".
+</p>
+</li>
+<li>
+Two-element list arguments of the form
+<code>(</code><i>symbol char</i><code>)</code>
+where the symbol represents the system-independent name of a character
+and the char represents the actual character:
+<code>eof</code>,
+<code>eol</code>,
+<code>erase</code>,
+<code>intr</code>,
+<code>kill</code>,
+<code>quit</code>,
+<code>susp</code>,
+<code>start</code>.
+</li>
+</ul>
+</blockquote>
+
+<code>(gtty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr()</code>
+<blockquote>
+
+Returns a list of symbols and two-element lists
+that are acceptable to <code>stty</code>.
+</blockquote>
+
+<h3>Miscellaneous procedures</h3>
+
+<p>See also the <code>terminal?</code> procedure in
+<a href="https://srfi.schemers.org/srfi-170/srfi-170.html">SRFI 170</a>,
+which returns <code>#t</code> if the supplied port argument is a terminal.
+</p>
+
+<code>(terminal-file-name <i>port</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>string</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>ttyname()</code>
+<blockquote>
+Returns the file name of the terminal.
+<pre class="example">
+(terminal-file-name <i>port</i>) &rArr; "/dev/ttyS0"
+</pre>
+</blockquote>
+
+<code>(terminal-flow-control <i>port exact-integer</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>unspecified</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcflow()</code>
+<blockquote>
+<p>
+Controls the flow of characters in either direction,
+depending on which of
+<code>terminal/stop-output</code>,
+<code>terminal/start-output</code>,
+<code>terminal/stop-input</code>,
+and <code>terminal/start-input</code>
+is the second argument
+</p>
+<pre class="example">
+(terminal-flow-control <i>port</i> <code>terminal/start-output</code> &rArr; <i>unspecified</i>
+</pre>
+</blockquote>
+
+<code>(terminal-wait <i>port</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>unspecified</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcdrain()</code>
+<blockquote>
+<p>
+Waits until all characters queued to be sent on the terminal
+have been sent.
+</p>
+<pre class="example">
+(terminal-wait <i>port</i>) &rArr; unspecified
+</pre>
+</blockquote>
+<code>(terminal-discard <i>port int</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>unspecified</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcflush()</code>
+<blockquote>
+<p>
+Discards any input received but not yet read,
+or any output written but not yet sent,
+or both, depending on which of
+<code>terminal/discard-input</code>,
+<code>terminal/discard-output</code>, or
+<code>terminal/discard-both</code>
+is the second argument.
+</p>
+<pre class="example">
+(terminal-discard <i>port</i> <code>discard-input</code>) &rArr; <i>unspecified</i>
+</pre>
+</blockquote>
+
+<code>(terminal-send-break <i>port boolean</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcsendbreak()</code>
+<blockquote>
+<p>
+If <i>boolean</i> is false,
+sends a break signal (consecutive zero bits)
+for at least 0.25 seconds and not more than 0.5 seconds.
+If <i>boolean</i> is true,
+sends a break signal for an implementation-defined
+length of time.
+</p>
+<pre class="example">
+(terminal-send-break <i>port</i>) &rArr; <i>unspecified</i>
+</pre>
+</blockquote>
 
 <h2>Implementation</h2>
 
