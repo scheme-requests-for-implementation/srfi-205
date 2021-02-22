@@ -331,10 +331,11 @@ although they may or may not have the expected result:
 </li>
 <li>
 <p>
-Exact integer arguments
-representing transmission/reception speeds in bits per second:
-0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200,
-where 0 means "hang up".
+Two-element list arguments of the form
+<code>(</code><i>symbol exact-integer</i><code>)</code>
+where the symbol is <code>ispeed</code> or <code>ospeed</code>
+for reception and transmission speed, and the exact integer
+is the speed in bits per second, where 0 means "hang up".
 </p>
 </li>
 <li>
