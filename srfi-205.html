@@ -28,7 +28,6 @@ by John Cowan (author) and Harold Ancell (author and editor)
 </ul>
 
 
-
 <h2>Abstract</h2>
 
 <p>
@@ -44,6 +43,10 @@ functionality a modern Scheme programmer might desire by supplying a
 <a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/stty.html">stty</a>
 procedure, and simple abstractions on top of it.
 </p>
+<p>
+It also provides a set of miscellaneous P<small>OSIX</small> terminal
+procedures that don't belong anywhere else.
+</p>
 
 
 <h2>Issues</h2>
@@ -55,8 +58,8 @@ Is the decision to put all termios manipulation in a single SRFI correct?
 <li><p>
 Are there any modern needs for exposed <code>stty(1)</code>
 functionality besides serial-line manipulation for communication with
-other systems?  (This SRFI does not propose to support retrocomputing
-with real serial-line terminals.)
+other systems?  (This SRFI does not propose to support or hinder
+retrocomputing with real serial-line terminals.)
 </p></li>
 <li><p>
 Exactly which <code>stty(1)</code> arguments are needed for modern
@@ -92,8 +95,6 @@ presumably cheap to implement.  If you first implement
 simply and elegantly built on top of it with a few lines of code.
 </p>
 <p>
-This SRFI depends on
-<a href="https://srfi.schemers.org/srfi-198/srfi-198.html">SRFI 198: Foreign Interface Error Handling.</a>
 Various procedures or their equivalents in
 <a href="https://srfi.schemers.org/srfi-170/srfi-170.html">SRFI 170: POSIX API</a>,
 from which it was forked off of, are needed or may be useful in
@@ -190,7 +191,7 @@ element can be retrieved without popping it.
 The stack is initialized with a single state object representing
 the state of the terminal when the program starts.
 In practice this may be done on the first call to any of this
-SRFI's procedures.
+section's <code>with-*</code> or <code>without-*</code> procedures.
 </p>
 <p>
 The procedures use <code>dynamic-wind</code> when executing
@@ -269,10 +270,9 @@ of <code>proc</code>.
 In terms of the implementation model,
 the current terminal state is retrieved and a copy of it is pushed on the stack
 as a state object.
-Then the state object is modified by disabling the following flags:
-<code>ECHO ECHOE ECHOK ICANON</code>.
-The <code>CS8</code> setting is enabled, and the <code>VMIN</code> and <code>VTIME</code> settings
-are set using <i>min</i> and <i>time</i> respectively.
+Then the state object is modified by disabling the
+<code>ECHO</code>, <code>ECHOE</code>, <code>ECHOK</code> and <code>ICANON</code> flags,
+and enabling the <code>CS8</code> setting.
 Then the state object is written back to the terminal
 and the implementation model is followed thereafter.
 </p>
@@ -299,14 +299,13 @@ and the <code>CS8</code> setting is enabled.
 Then the modified state object is written back to the terminal
 and the implementation model is followed thereafter.
 </p>
-</blockquote>
 <pre class="example">
 (with-cooked-mode (current-input-port)
                   (lambda (x y z) (&lt;spawn-shell-process&gt; x y z))) &rArr; 0
 </pre>
+</blockquote>
 
-<code>(without-echo <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>
- -ECHO -ECHOE -ECHOK -ECHONL</code>&nbsp;
+<code>(without-echo <i>port proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i><i>[values]</i></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
 <blockquote>
 <p>
 Echoing of input is disabled on the terminal during the execution of <code>proc</code>
@@ -316,10 +315,9 @@ and then is re-enabled.
 In terms of the implementation model,
 the current terminal state is retrieved and a copy of it is pushed on the stack
 as a state object.
-Then the state object is modified by disabling the following flags:
-<code>ECHO ECHOE ECHOK</code>.
-The <code>CS8</code> setting is enabled, and the <code>VMIN</code> and <code>VTIME</code> settings
-are set using <i>min</i> and <i>time</i> respectively.
+Then the state object is modified by disabling the
+<code>ECHO</code>, <code>ECHOE</code> and <code>ECHOK</code> flags,
+and enabling the <code>CS8</code> setting.
 Then the state object is written back to the terminal
 and the implementation model is followed thereafter.
 </p>
@@ -328,6 +326,7 @@ and the implementation model is followed thereafter.
               (lambda (x) (read-string 8 (current-input-port)))) &rArr; "12345678"
 </pre>
 </blockquote>
+
 
 <h3>Low-level terminal manipulation</h3>
 
@@ -422,6 +421,7 @@ Returns a list of symbols and two-element lists
 that are acceptable to <code>stty</code>.
 </blockquote>
 
+
 <h3>Miscellaneous procedures</h3>
 
 <p>See also the <code>terminal?</code> procedure in
@@ -449,7 +449,7 @@ and <code>terminal/start-input</code>
 is the second argument
 </p>
 <pre class="example">
-(terminal-flow-control <i>port</i> <code>terminal/start-output</code> &rArr; <i>unspecified</i>
+(terminal-flow-control <i>port</i> <code>terminal/start-output</code>) &rArr; <i>unspecified</i>
 </pre>
 </blockquote>
 
@@ -493,6 +493,7 @@ length of time.
 (terminal-send-break <i>port</i>) &rArr; <i>unspecified</i>
 </pre>
 </blockquote>
+
 
 <h2>Implementation</h2>
 
