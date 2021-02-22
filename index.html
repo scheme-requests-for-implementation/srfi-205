@@ -23,7 +23,7 @@
     <p class="authors">by John Cowan (author) and Harold Ancell (author and editor)</p>
     <p class="based-on"></p>
     <p class="status">status: <em>draft</em> (2020-07-23)</p>
-    <p class="keywords">keywords: <a href="https://srfi.schemers.org/?keywords=operating-system">Operating System</a></p><span class="see-also">See also <a href="/srfi-170/">SRFI 170: POSIX API</a> and <a href="/srfi-198/">SRFI 198: Foreign Interface Error Handling</a>.</span>
+    <p class="keywords">keywords: <a href="https://srfi.schemers.org/?keywords=operating-system">Operating System</a></p><span class="see-also">See also <a href="/srfi-170/">SRFI 170: POSIX API</a> and <a href="/srfi-198/">SRFI 198: Foreign Interface Status</a>.</span>
 
     <ul class="info">
       <li><a href="srfi-205.html">The SRFI Document</a></li>
@@ -78,7 +78,15 @@
                    value="srfi-205@srfi.schemers.org"></form></a></li></ul>
     <h2>Abstract</h2><p>
 This SRFI describes procedures for command-line and terminal interface
-programs to use to safely change and reset terminal modes, for example
-from cooked to raw and back, and for serial-line device manipulation
-for interfacing with embedded hardware and the like.
-</p></body></html>
+programs to safely change and reset terminal modes, for example from
+cooked to raw and back, and for serial-line device manipulation for
+interfacing with embedded hardware and the like.
+</p>
+<p>
+It is intended to provide all the
+<a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/termios.h.html">termios structure</a>
+functionality a modern Scheme programmer might desire by supplying a
+<a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/stty.html">stty</a>
+procedure, and simple abstractions on top of it.
+</p>
+</body></html>
