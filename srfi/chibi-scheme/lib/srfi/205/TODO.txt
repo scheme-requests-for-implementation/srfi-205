@@ -5,6 +5,11 @@ For each release:
 
 ----------------
 
+Split tests into "works for all" with-* etc., and serial line
+manipulation; for the latter, why not an echo server?
+
+----------------
+
 Consider adding miscellaneous scsh procedures per
 https://srfi-email.schemers.org/srfi-205/msg/14647343/
 
