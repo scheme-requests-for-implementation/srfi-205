@@ -52,19 +52,20 @@ procedures that don't belong anywhere else.
 <h2>Issues</h2>
 
 <ul>
-<li><p>
-Is the decision to put all termios manipulation in a single SRFI correct?
-</p></li>
-<li><p>
+<li>
+<p>
 Are there any modern needs for exposed <code>stty(1)</code>
 functionality besides serial-line manipulation for communication with
 other systems?  (This SRFI does not propose to support or hinder
 retrocomputing with real serial-line terminals.)
-</p></li>
-<li><p>
+</p>
+</li>
+<li>
+<p>
 Exactly which <code>stty(1)</code> arguments are needed for modern
 serial-line use, such as with embedded computing?
-</p></li>
+</p>
+</li>
 </ul>
 
 
@@ -107,7 +108,8 @@ concert with it.  It is based on the
 
 <h3>Error handling</h3>
 
-<p>Throughout this specification, it is an error if
+<p>
+Throughout this specification, it is an error if
 <i>port</i> is not open on a terminal.
 </p>
 
@@ -120,9 +122,11 @@ over whatever the implementation uses to report such errors:
 
 <code>(posix-error? <i>obj</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp; <i>boolean</i>
 <blockquote>
+<p>
 This procedure returns <code>#t</code> if <code>obj</code> is
 a condition object that describes a P<small>OSIX</small> error,
 and <code>#f</code> otherwise.
+</p>
 </blockquote>
 
 <code>(posix-error-name <i>posix-error</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp; <i>symbol</i>
@@ -148,11 +152,13 @@ that does not exist) almost always corresponds to an <code>errno</code>
 value of 2.
 But although <code>ETIMEDOUT</code> (meaning that a TCP connection
 has been unresponsive for too long) is standardized by P<small>OSIX</small>,
-it has a <code>errno</code> value of 110 on Linux, 60 on FreeBSD, and 116 on Cygwin.</p>
+it has a <code>errno</code> value of 110 on Linux, 60 on FreeBSD, and 116 on Cygwin.
+</p>
 </blockquote>
 
 <code>(posix-error-message <i>posix-error</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp; <i>string</i>
 <blockquote>
+<p>
 This procedure returns a string that is an error message reflecting
 the value of <code>errno</code> when
 the P<small>OSIX</small> function reported an error.
@@ -160,6 +166,7 @@ This string may be, or may include, the output of the
 <code>strerror()</code> function,
 and is useful for reporting the cause of the error to the user.
 It may or may not be localized.
+</p>
 </blockquote>
 
 <p>
@@ -338,9 +345,11 @@ extended to allow specifying the special device file to be
 manipulated, here associated with a port.
 At least the following arguments must be supported,
 although they may or may not have the expected result:
+</p>
 <ul>
 <li>
-<p>Symbol arguments
+<p>
+Symbol arguments
 (arguments on the same line are mutually exclusive):
 </p>
 <ul>
@@ -416,22 +425,26 @@ and the char represents the actual character:
 
 <code>(gtty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr()</code>
 <blockquote>
-
+<p>
 Returns a list of symbols and two-element lists
 that are acceptable to <code>stty</code>.
+</p>
 </blockquote>
 
 
 <h3>Miscellaneous procedures</h3>
 
-<p>See also the <code>terminal?</code> procedure in
+<p>
+See also the <code>terminal?</code> procedure in
 <a href="https://srfi.schemers.org/srfi-170/srfi-170.html">SRFI 170</a>,
 which returns <code>#t</code> if the supplied port argument is a terminal.
 </p>
 
 <code>(terminal-file-name <i>port</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>string</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>ttyname()</code>
 <blockquote>
+<p>
 Returns the file name of the terminal.
+</p>
 <pre class="example">
 (terminal-file-name <i>port</i>) &rArr; "/dev/ttyS0"
 </pre>
@@ -463,6 +476,7 @@ have been sent.
 (terminal-wait <i>port</i>) &rArr; unspecified
 </pre>
 </blockquote>
+
 <code>(terminal-discard <i>port int</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>unspecified</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcflush()</code>
 <blockquote>
 <p>
