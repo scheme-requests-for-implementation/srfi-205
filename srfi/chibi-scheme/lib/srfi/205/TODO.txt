@@ -29,3 +29,7 @@ struct winsize ws;
 if (ioctl(fd, TIOCGWINSZ, &ws) == -1) error();
 width  = ws.ws_col;
 height = ws.ws_row;
+
+----------------
+
+Add examples to Error Handling section.
