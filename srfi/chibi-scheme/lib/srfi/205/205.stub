@@ -1,5 +1,6 @@
 ;; ~~~please see copyright notice in ./COPYING
 
+(c-system-include "unistd.h")
 (c-system-include "errno.h")
 
 
@@ -207,3 +208,7 @@
 |#
 
 end removal of all but terminal? supporting stubs |#
+
+;;; Miscellaneous procedures
+
+(define-c string (%ttyname ttyname) (int))

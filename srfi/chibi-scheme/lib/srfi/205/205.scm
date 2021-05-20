@@ -191,3 +191,16 @@
         (lambda ()
           (reset-terminal)))))
 |#
+
+;;; Miscellaneous procedures
+
+(define (terminal-file-name the-port)
+  (if (not (port? the-port))
+      (sanity-check-error "argument must be a port" 'terminal-file-name the-port))
+  (let ((the-fd (port-fileno the-port)))
+    (if (not (exact-integer? the-fd))
+        (sanity-check-error "argument must be a port associated with a file descriptor" 'terminal-file-name the-port))
+    (let ((the-filename (%ttyname the-fd)))
+      (if (not the-filename)
+          (errno-error (errno) 'terminal-file-name 'ttyname the-port)
+          the-filename))))

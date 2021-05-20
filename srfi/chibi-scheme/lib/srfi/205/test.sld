@@ -46,9 +46,11 @@
 
     (define the-error #f)
 
+    (define input-port-dev-zero (open-input-file "/dev/zero")) ;; not a terminal port
+
     (define (run-tests)
 
-      (test-group "srfi-205: POSIX Terminal Fundimentals"
+      (test-group "srfi-205: POSIX Terminal Fundamentals"
 
 #|
         (test-group "Prologue"
@@ -204,13 +206,19 @@
 |#
 
 
-#|
         (test-group "Miscellaneous procedures"
 
+          (test-error (terminal-file-name "foo"))
+          (test-error (terminal-file-name (open-input-string "plover")))
+          (test-error (terminal-file-name input-port-dev-zero))
+          (test-assert (string? (terminal-file-name (current-input-port))))
+
           ) ;; end
-|#
+
 
         (test-group "Epilogue: ~~~cleanup, force a gc"
+
+          (close-port input-port-dev-zero)
 
           (test-not-error (gc)) ;; see if we blow up
 
