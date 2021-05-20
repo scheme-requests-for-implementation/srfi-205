@@ -2,6 +2,7 @@
 
 (c-system-include "unistd.h")
 (c-system-include "errno.h")
+(c-system-include "termios.h")
 
 
 ;; All POSIX errno defines
@@ -212,3 +213,10 @@ end removal of all but terminal? supporting stubs |#
 ;;; Miscellaneous procedures
 
 (define-c string (%ttyname ttyname) (int))
+
+(define-c-const int (terminal/stop-output "TCOOFF"))
+(define-c-const int (terminal/start-output  "TCOON"))
+(define-c-const int (terminal/stop-input "TCIOFF"))
+(define-c-const int (terminal/start-input  "TCION"))
+
+(define-c errno (%tcflow tcflow) (int int))

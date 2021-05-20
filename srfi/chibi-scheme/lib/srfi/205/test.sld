@@ -213,6 +213,12 @@
           (test-error (terminal-file-name input-port-dev-zero))
           (test-assert (string? (terminal-file-name (current-input-port))))
 
+          (test-error (terminal-flow-control "foo" terminal/stop-output))
+          (test-error (terminal-flow-control (open-input-string "plover") terminal/stop-output))
+          (test-error (terminal-flow-control input-port-dev-zero terminal/stop-output))
+          (test-error (terminal-flow-control (current-input-port) 'a))
+          (test-error (terminal-flow-control (current-input-port) (+ terminal/start-input 50)))
+
           ) ;; end
 
 
