@@ -212,6 +212,19 @@
     (if (not (exact-integer? the-fd))
         (sanity-check-error "first argument must be a port associated with a file descriptor" 'terminal-flow-control the-port the-action))
     (if (not (exact-integer? the-action))
-        (sanity-check-error "second argument must be a exact integer action" 'terminal-flow-control the-port the-action))
+        (sanity-check-error "second argument must be an action that is an exact integer" 'terminal-flow-control the-port the-action))
     (if (not (%tcflow the-fd the-action))
              (errno-error (errno) 'terminal-flow-control 'tcflow the-port the-action))))
+
+;;; terminal-wait
+
+(define (terminal-discard the-port the-action)
+  (if (not (port? the-port))
+      (sanity-check-error "first argument must be a port" 'terminal-discard the-port the-action))
+  (let ((the-fd (port-fileno the-port)))
+    (if (not (exact-integer? the-fd))
+        (sanity-check-error "first argument must be a port associated with a file descriptor" 'terminal-discard the-port the-action))
+    (if (not (exact-integer? the-action))
+        (sanity-check-error "second argument must be an action that is an exact integer" 'terminal-discard the-port the-action))
+    (if (not (%tcflush the-fd the-action))
+             (errno-error (errno) 'terminal-discard 'tcflush the-port the-action))))

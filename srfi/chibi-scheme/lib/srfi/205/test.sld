@@ -217,7 +217,16 @@
           (test-error (terminal-flow-control (open-input-string "not a port with a file descriptor") terminal/stop-output))
           (test-error (terminal-flow-control input-port-dev-zero terminal/stop-output)) ;; not a terminal port
           (test-error (terminal-flow-control (current-input-port) 'not-a-fixed-integer))
-          (test-error (terminal-flow-control (current-input-port) (+ terminal/start-input 50))) ;; way beyond normal valid range
+          (test-error (terminal-flow-control (current-input-port) (+ terminal/start-input 50))) ;; way beyond normal valid range, but does make syscall
+
+;;; terminal-wait
+
+          (test-error (terminal-discard 'not-a-port terminal/stop-output))
+          (test-error (terminal-discard (open-input-string "not a port with a file descriptor") terminal/stop-output))
+          (test-error (terminal-discard input-port-dev-zero terminal/stop-output)) ;; not a terminal port
+          (test-error (terminal-discard (current-input-port) 'not-a-fixed-integer))
+          (test-error (terminal-discard (current-input-port) (+ terminal/discard-both 50))) ;; way beyond normal valid range, but does make syscall
+          (test-assert (terminal-discard (current-input-port) terminal/discard-input)) ;; should be safe enough....
 
           ) ;; end
 

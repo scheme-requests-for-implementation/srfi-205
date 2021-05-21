@@ -50,8 +50,9 @@
    terminal/stop-output terminal/start-output
    terminal/stop-input terminal/start-input
    terminal-flow-control
-   ;; terminal-wait
-   ;; terminal-discard
+;;   terminal-wait
+   terminal/discard-input terminal/discard-output terminal/discard-both
+   terminal-discard
    ;; terminal-send-break
 
    )
