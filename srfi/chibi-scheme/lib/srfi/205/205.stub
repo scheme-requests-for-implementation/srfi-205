@@ -229,3 +229,4 @@ end removal of all but terminal? supporting stubs |#
 
 (define-c errno (%tcflush tcflush) (int int))
 
+(define-c errno (%tcsendbreak tcsendbreak) (int int))

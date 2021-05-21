@@ -53,7 +53,7 @@
    terminal-wait
    terminal/discard-input terminal/discard-output terminal/discard-both
    terminal-discard
-   ;; terminal-send-break
+   terminal-send-break
 
    )
 
