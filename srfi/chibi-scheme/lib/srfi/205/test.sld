@@ -236,6 +236,14 @@
           (test-error (terminal-discard (current-input-port) (+ terminal/discard-both 50))) ;; way beyond normal valid range, but does make syscall
           (test-assert (terminal-discard (current-input-port) terminal/discard-input)) ;; should be safe enough....
 
+          (test-error (terminal-send-break 'not-a-port 0))
+          (test-error (terminal-send-break (open-input-string "not a port with a file descriptor") 0))
+          (test-error (terminal-send-break -1 0)) ;; not a port
+          (test-error (terminal-send-break input-port-dev-zero 0)) ;; not a terminal port
+          (test-error (terminal-send-break (current-input-port) 'not-a-fixed-integer))
+          (test-assert (terminal-send-break (current-input-port) 0)) ;; should be safe enough unless you're using a real terminal??
+          (test-assert (terminal-send-break (current-input-port) 10)) ;; should be safe enough unless you're using a real terminal??
+
           ) ;; end
 
 
