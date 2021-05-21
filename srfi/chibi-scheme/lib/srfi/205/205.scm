@@ -216,7 +216,14 @@
     (if (not (%tcflow the-fd the-action))
              (errno-error (errno) 'terminal-flow-control 'tcflow the-port the-action))))
 
-;;; terminal-wait
+(define (terminal-wait the-port)
+  (if (not (port? the-port))
+      (sanity-check-error "first argument must be a port" 'terminal-wait the-port))
+  (let ((the-fd (port-fileno the-port)))
+    (if (not (exact-integer? the-fd))
+        (sanity-check-error "first argument must be a port associated with a file descriptor" 'terminal-wait the-port))
+    (if (not (retry-if-EINTR (lambda () (%tcdrain the-fd))))
+        (errno-error (errno) 'terminal-wait 'tcdrain the-port))))
 
 (define (terminal-discard the-port the-action)
   (if (not (port? the-port))

@@ -221,6 +221,8 @@ end removal of all but terminal? supporting stubs |#
 
 (define-c errno (%tcflow tcflow) (int int))
 
+(define-c errno (%tcdrain tcdrain) (int))
+
 (define-c-const int (terminal/discard-input "TCIFLUSH"))
 (define-c-const int (terminal/discard-output "TCOFLUSH"))
 (define-c-const int (terminal/discard-both "TCIOFLUSH"))
