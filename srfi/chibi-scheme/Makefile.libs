@@ -35,6 +35,9 @@ lib/srfi/205/205$(SO): lib/srfi/205/205.c
 lib/srfi/205/aux$(SO): lib/srfi/205/aux.c
 	$(CC) $(CLIBFLAGS) $(CLINKFLAGS) $(XCPPFLAGS) $(XCFLAGS) -Os $(LDFLAGS) -o $@ $< -L$(CHIBI_LOCATION_PATH) $(RLDFLAGS) $(XLIBS) -lchibi-scheme
 
+lib/srfi/205/terminal-dimensions$(SO): lib/srfi/205/terminal-dimensions.c
+	$(CC) $(CLIBFLAGS) $(CLINKFLAGS) $(XCPPFLAGS) $(XCFLAGS) -Os $(LDFLAGS) -o $@ $< -L$(CHIBI_LOCATION_PATH) $(RLDFLAGS) $(XLIBS) -lchibi-scheme
+
 
 clean-libs:
 	$(RM) $(COMPILED_LIBS)

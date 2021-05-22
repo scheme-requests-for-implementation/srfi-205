@@ -54,6 +54,7 @@
    terminal/discard-input terminal/discard-output terminal/discard-both
    terminal-discard
    terminal-send-break
+   terminal-dimensions
 
    )
 
@@ -87,8 +88,10 @@
      )
 
     (include-shared "205/205")
-    (include-shared "205/aux")))
+    (include-shared "205/aux")
+    (include-shared "205/terminal-dimensions")))
 
   (include "205/common.scm")
   (include "205/205.scm")
+  (include "205/terminal-dimensions.scm")
   )
