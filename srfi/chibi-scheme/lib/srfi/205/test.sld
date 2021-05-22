@@ -210,7 +210,7 @@
 
           (test-error (terminal-file-name 'not-a-port))
           (test-error (terminal-file-name (open-input-string "not a port with a file descriptor")))
-          (test-error (terminal-file-name -1)) ;; not a port
+          (test-error (terminal-file-name -1)) ;; exact integer but not a port
           (test-error (terminal-file-name input-port-dev-zero)) ;; not a terminal port
           (test-assert (string? (terminal-file-name (current-input-port))))
 
@@ -218,13 +218,13 @@
           (test-error (terminal-flow-control (open-input-string "not a port with a file descriptor") terminal/stop-output))
           (test-error (terminal-flow-control -1 terminal/stop-output)) ;; not a port
           (test-error (terminal-flow-control input-port-dev-zero terminal/stop-output)) ;; not a terminal port
-          (test-error (terminal-flow-control (current-input-port) 'not-a-fixed-integer))
+          (test-error (terminal-flow-control (current-input-port) 'not-an-exact-integer))
           (test-error (terminal-flow-control (current-input-port) (+ terminal/start-input 50))) ;; way beyond normal valid range, but does make syscall
 
           (test-error (terminal-wait 'not-a-port))
           (test-error (terminal-wait (open-input-string "not a port with a file descriptor")))
           (test-error (terminal-wait input-port-dev-zero)) ;; not a terminal port
-          (test-error (terminal-wait -1)) ;; not a port
+          (test-error (terminal-wait -1)) ;; exact integer but not a port
           (test-assert (terminal-wait (current-input-port))) ;; seems to be safe....
           (test-assert (terminal-wait (current-output-port))) ;; seems to be safe enough....
 
@@ -232,7 +232,7 @@
           (test-error (terminal-discard (open-input-string "not a port with a file descriptor") terminal/stop-output))
           (test-error (terminal-discard -1 terminal/stop-output)) ;; not a port
           (test-error (terminal-discard input-port-dev-zero terminal/stop-output)) ;; not a terminal port
-          (test-error (terminal-discard (current-input-port) 'not-a-fixed-integer))
+          (test-error (terminal-discard (current-input-port) 'not-an-exact-integer))
           (test-error (terminal-discard (current-input-port) (+ terminal/discard-both 50))) ;; way beyond normal valid range, but does make syscall
           (test-assert (terminal-discard (current-input-port) terminal/discard-input)) ;; should be safe enough....
 
@@ -240,11 +240,21 @@
           (test-error (terminal-send-break (open-input-string "not a port with a file descriptor") 0))
           (test-error (terminal-send-break -1 0)) ;; not a port
           (test-error (terminal-send-break input-port-dev-zero 0)) ;; not a terminal port
-          (test-error (terminal-send-break (current-input-port) 'not-a-fixed-integer))
+          (test-error (terminal-send-break (current-input-port) 'not-an-exact-integer))
           (cond-expand ((not openbsd)
             (test-assert (terminal-send-break (current-input-port) 0)) ;; should be safe enough on Linux unless you're using a real terminal??
             (test-assert (terminal-send-break (current-input-port) 10)) ;; should be safe enough unless Linux you're using a real terminal??
             ))
+
+          (test-error (terminal-dimensions 'not-a-port))
+          (test-error (terminal-dimensions (open-input-string "not a port with a file descriptor")))
+          (test-error (terminal-dimensions input-port-dev-zero)) ;; not a terminal port
+          (test-error (terminal-dimensions -1)) ;; exact integer but not a port
+          (test-assert (terminal-dimensions (current-output-port)))
+          (let ((dimensions-list (terminal-dimensions (current-output-port))))
+            (test-assert (list? dimensions-list))
+            (test-assert (and (exact-integer? (car dimensions-list)) (exact-integer? (cadr dimensions-list))))
+            (test-assert (and (> (car dimensions-list) -1) (> (cadr dimensions-list) -1))))
 
           ) ;; end
 

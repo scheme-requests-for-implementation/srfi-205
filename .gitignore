@@ -1,3 +1,4 @@
 *~
 *.so
 srfi/chibi-scheme/lib/srfi/205/205.c
+srfi/chibi-scheme/lib/srfi/205/terminal-dimensions.c
