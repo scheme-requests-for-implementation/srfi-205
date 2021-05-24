@@ -31,6 +31,12 @@ HTML: Add examples to Error Handling section.
 
 Adjustments to what in termios can or should be changeble:
 
+Note Linux will generally be the OS of choice to do embedded
+programming with (after Windows) due to tool support, which is
+generally for an LTS version of Ubuntu.
+
+See Linux ioctl_tty(2)
+
 Mostly harmless? but not supported in OpenBSD:
 
 Delays:
@@ -44,9 +50,15 @@ TABS is synonym for TAB0, inverse is TAB3
 OFILL, "Use fill characters for delay."
 OFDEL, "Fill is DEL."
 
-HUP in Linux is same as POXIS HUPCL, "Hang up on last close."
+HUP in Linux is same as POSIX HUPCL, "Hang up on last close."
+
+----
 
 POSIX defines baud rate B<numbers>, investigate.
+
+RTS/CTS RS-232 flow control is accounted for with a CRTSCTS flag in
+asm-generic/termbits.h and x86_64-linux-gnu/bits/termios.h in Linux
+and sys/termios.h in OpenBSD
 
 ----------------
 
