@@ -29,3 +29,24 @@ HTML: Add examples to Error Handling section.
 
 ----------------
 
+Adjustments to what in termios can or should be changeble:
+
+Mostly harmless? but not supported in OpenBSD:
+
+Delays:
+
+BS0-1
+CF0-3
+FF0-1
+NL0-1
+TAB0-3, but TAB3 changes tabs to spaces
+TABS is synonym for TAB0, inverse is TAB3
+OFILL, "Use fill characters for delay."
+OFDEL, "Fill is DEL."
+
+HUP in Linux is same as POXIS HUPCL, "Hang up on last close."
+
+POSIX defines baud rate B<numbers>, investigate.
+
+----------------
+
