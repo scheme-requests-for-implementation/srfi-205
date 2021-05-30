@@ -192,6 +192,53 @@
           (reset-terminal)))))
 |#
 
+;;; Low-level terminal manipulation
+
+#|
+BRKINT
+CLOCAL
+CREAD
+CSTOPB
+ECHO
+ECHOE
+ECHOK
+ECHONL
+HUP
+HUPCL
+ICANON
+ICRNL
+IEXTEN
+IGNBRK
+IGNCR
+IGNPAR
+INLCR
+INPCK
+ISIG
+ISTRIP
+IXANY
+IXOFF
+IXON
+NOFLSH
+OCRNL
+ONLCR
+ONLRET
+ONOCR
+OPOST
+PARENB
+PARMRK
+PARODD
+TABS
+TOSTOP
+
+;; Only one from the following groups are allowed:
+
+CS5 CS6 CS7 CS8
+|#
+
+;; HUP = HUPCL
+
+
+
 ;;; Miscellaneous procedures
 
 (define (terminal-file-name the-port)
