@@ -210,6 +210,50 @@
 
 end removal of all but terminal? supporting stubs |#
 
+;;; Low-level terminal manipulation
+
+(define-c-const unsigned-long BRKINT)
+(define-c-const unsigned-long CLOCAL)
+(define-c-const unsigned-long CREAD)
+(define-c-const unsigned-long CSTOPB)
+(define-c-const unsigned-long ECHO)
+(define-c-const unsigned-long ECHOE)
+(define-c-const unsigned-long ECHOK)
+(define-c-const unsigned-long ECHONL)
+(define-c-const unsigned-long HUPCL)
+(define-c-const unsigned-long ICANON)
+(define-c-const unsigned-long ICRNL)
+(define-c-const unsigned-long IEXTEN)
+(define-c-const unsigned-long IGNBRK)
+(define-c-const unsigned-long IGNCR)
+(define-c-const unsigned-long IGNPAR)
+(define-c-const unsigned-long INLCR)
+(define-c-const unsigned-long INPCK)
+(define-c-const unsigned-long ISIG)
+(define-c-const unsigned-long ISTRIP)
+(define-c-const unsigned-long IXANY)
+(define-c-const unsigned-long IXOFF)
+(define-c-const unsigned-long IXON)
+(define-c-const unsigned-long NOFLSH)
+(define-c-const unsigned-long OCRNL)
+(define-c-const unsigned-long ONLCR)
+(define-c-const unsigned-long ONLRET)
+(define-c-const unsigned-long ONOCR)
+(define-c-const unsigned-long OPOST)
+(define-c-const unsigned-long PARENB)
+(define-c-const unsigned-long PARMRK)
+(define-c-const unsigned-long PARODD)
+(define-c-const unsigned-long TOSTOP)
+
+
+;; Only one from the following groups are allowed:
+
+(define-c-const unsigned-long CS5)
+(define-c-const unsigned-long CS6)
+(define-c-const unsigned-long CS7)
+(define-c-const unsigned-long CS8)
+
+
 ;;; Miscellaneous procedures
 
 (define-c string (%ttyname ttyname) (int))
