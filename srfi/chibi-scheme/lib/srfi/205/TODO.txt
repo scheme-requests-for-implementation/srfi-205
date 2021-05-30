@@ -39,17 +39,6 @@ See Linux ioctl_tty(2)
 
 Mostly harmless? but not supported in OpenBSD:
 
-Delays:
-
-BS0-1
-CF0-3
-FF0-1
-NL0-1
-TAB0-3, but TAB3 changes tabs to spaces
-TABS is synonym for TAB0, inverse is TAB3
-OFILL, "Use fill characters for delay."
-OFDEL, "Fill is DEL."
-
 HUP in Linux is same as POSIX HUPCL, "Hang up on last close."
 
 ----
