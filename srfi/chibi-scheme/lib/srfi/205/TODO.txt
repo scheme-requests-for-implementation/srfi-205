@@ -51,3 +51,10 @@ and sys/termios.h in OpenBSD
 
 ----------------
 
+Hello World example, initial warning, have done this before.
+
+Description	Resource	Path	Location	Type
+
+<a href="file:/usr/local/share/ti/ccs1031/ccs/tools/compiler/dmed/HTML/MSP430/10420.html">#10420-D</a>
+
+For FRAM devices, at start up, the GPIO power-on default high-impedance mode needs to be disabled to activate previously configured port settings. This can be done by clearing the LOCKLPM5 bit in PM5CTL0 register.
