@@ -403,9 +403,8 @@ tenths of a second in non-canonical mode input processing.
 </li>
 <li>
 Two-element list arguments of the form
-<code>(</code><i>symbol char</i><code>)</code>
-where the symbol represents the system-independent name of a character
-and the char represents the actual character:
+<code>(</code><i>symbol string</i><code>)</code>
+where the symbol represents the system-independent name of a character:
 <code>eof</code>,
 <code>eol</code>,
 <code>erase</code>,
@@ -416,8 +415,25 @@ and the char represents the actual character:
 <code>start</code>,
 or
 <code>stop</code>.
+For the string:
+<ul>
+<li>
+If a single character it is the actual character.
+</li>
+<li>
+If a two character sequence beginning with '<code>^</code>' it is
+treated as the control character for the second character, like
+"<code>^c</code>" for U+0003.
+</li>
+<li>
+If the string is "<code>^-</code>" or "<code>undef</code>" the control
+character is disabled (set to <code>_POSIX_VDISABLE</code>) if it is
+in effect for the device, if not an error is raised.
 </li>
 </ul>
+</li>
+</ul>
+
 </blockquote>
 
 <code>(gtty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr()</code>
