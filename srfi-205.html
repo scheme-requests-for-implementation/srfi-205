@@ -337,7 +337,7 @@ and the implementation model is followed thereafter.
 
 <h3>Low-level terminal manipulation</h3>
 
-<code>(stty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
+<code>(stty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined or list</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
 <blockquote>
 <p>
 Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
@@ -362,6 +362,7 @@ Symbol arguments
 <li><code>echoe</code> <code>-echoe</code></li>
 <li><code>echok</code> <code>-echok</code></li>
 <li><code>echonl</code> <code>-echonl</code></li>
+<li><code>get</code></li>
 <li><code>hup</code> <code>-hup</code></li>
 <li><code>hupcl</code> <code>-hupcl</code></li>
 <li><code>icanon</code> <code>-icanon</code></li>
@@ -386,9 +387,17 @@ Symbol arguments
 <li><code>parenb</code> <code>-parenb</code></li>
 <li><code>parmrk</code> <code>-parmrk</code></li>
 <li><code>parodd</code> <code>-parodd</code></li>
+<li><code>sane</code></li>
 <li><code>tostop</code> <code>-tostop</code></li>
 </ul>
 </li>
+<p>
+The arguments <code>get</code> and <code>sane</code> must be the only
+optional argument if they are used.
+<code>get</code> returns a list of the current settings of the port
+as symbols and two-element lists suitable for using again
+with <code>stty</code>.
+</p>
 <li>
 <p>
 Two-element list arguments of the form
