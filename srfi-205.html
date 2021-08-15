@@ -445,11 +445,12 @@ in effect for the device, if not an error is raised.
 
 </blockquote>
 
-<code>(gtty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr()</code>
+<code>(gtty)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>list</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)
 <blockquote>
 <p>
 Returns a list of symbols and two-element lists
-that are acceptable to <code>stty</code>.
+that are acceptable to the implementation of <code>stty</code>.
+A particlar serial line port may not support all of them.
 </p>
 </blockquote>
 
