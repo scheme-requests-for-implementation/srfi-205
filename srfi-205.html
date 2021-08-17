@@ -355,10 +355,13 @@ Symbol arguments
 <ul>
 <li><code>brkint</code> <code>no-brkint</code></li>
 <li><code>clocal</code> <code>no-clocal</code></li>
+<li><code>cmspar</code> <code>no-cmspar</code></li>
 <li><code>cread</code> <code>no-cread</code></li>
+<li><code>crtscts</code> <code>no-crtscts</code></li>
 <li><code>cs5</code> <code>cs6</code> <code>cs7</code> <code>cs8</code></li>
 <li><code>cstopb</code> <code>no-cstopb</code></li>
 <li><code>echo</code> <code>no-echo</code></li>
+<li><code>echoctl</code> <code>no-echoctl</code></li>
 <li><code>echoe</code> <code>no-echoe</code></li>
 <li><code>echok</code> <code>no-echok</code></li>
 <li><code>echonl</code> <code>no-echonl</code></li>
@@ -371,15 +374,18 @@ Symbol arguments
 <li><code>ignbrk</code> <code>no-ignbrk</code></li>
 <li><code>igncr</code> <code>no-igncr</code></li>
 <li><code>ignpar</code> <code>no-ignpar</code></li>
+<li><code>imaxbel</code> <code>no-imaxbel</code></li>
 <li><code>inlcr</code> <code>no-inlcr</code></li>
 <li><code>inpck</code> <code>no-inpck</code></li>
 <li><code>isig</code> <code>no-isig</code></li>
 <li><code>istrip</code> <code>no-istrip</code></li>
+<li><code>iuclc</code> <code>no-iuclc</code></li>
 <li><code>ixany</code> <code>no-ixany</code></li>
 <li><code>ixoff</code> <code>no-ixoff</code></li>
 <li><code>ixon</code> <code>no-ixon</code></li>
 <li><code>noflsh</code> <code>no-noflsh</code></li>
 <li><code>ocrnl</code> <code>no-ocrnl</code></li>
+<li><code>olcuc</code> <code>no-olcuc</code></li>
 <li><code>onlcr</code> <code>no-onlcr</code></li>
 <li><code>onlret</code> <code>no-onlret</code></li>
 <li><code>onocr</code> <code>no-onocr</code></li>
@@ -389,6 +395,7 @@ Symbol arguments
 <li><code>parodd</code> <code>no-parodd</code></li>
 <li><code>sane</code></li>
 <li><code>tostop</code> <code>no-tostop</code></li>
+<li><code>xcase</code> <code>no-xcase</code></li>
 </ul>
 </li>
 <p>
@@ -416,9 +423,11 @@ Two-element list arguments of the form
 where the symbol represents the system-independent name of a character:
 <code>eof</code>,
 <code>eol</code>,
+<code>eol2</code>,
 <code>erase</code>,
 <code>intr</code>,
 <code>kill</code>,
+<code>lnext</code>,
 <code>quit</code>,
 <code>susp</code>,
 <code>start</code>,

@@ -214,7 +214,9 @@ end removal of all but terminal? supporting stubs |#
 
 (define-c-const unsigned-long BRKINT)
 (define-c-const unsigned-long CLOCAL)
+(define-c-const unsigned-long CMSPAR)
 (define-c-const unsigned-long CREAD)
+(define-c-const unsigned-long CRTSCTS)
 (define-c-const unsigned-long CSTOPB)
 (define-c-const unsigned-long ECHO)
 (define-c-const unsigned-long ECHOE)
@@ -227,10 +229,12 @@ end removal of all but terminal? supporting stubs |#
 (define-c-const unsigned-long IGNBRK)
 (define-c-const unsigned-long IGNCR)
 (define-c-const unsigned-long IGNPAR)
+(define-c-const unsigned-long IMAXBEL)
 (define-c-const unsigned-long INLCR)
 (define-c-const unsigned-long INPCK)
 (define-c-const unsigned-long ISIG)
 (define-c-const unsigned-long ISTRIP)
+(define-c-const unsigned-long IUCLC)
 (define-c-const unsigned-long IXANY)
 (define-c-const unsigned-long IXOFF)
 (define-c-const unsigned-long IXON)
@@ -244,6 +248,7 @@ end removal of all but terminal? supporting stubs |#
 (define-c-const unsigned-long PARMRK)
 (define-c-const unsigned-long PARODD)
 (define-c-const unsigned-long TOSTOP)
+(define-c-const unsigned-long XCASE)
 
 
 ;; Only one from the following groups are allowed:
@@ -253,6 +258,21 @@ end removal of all but terminal? supporting stubs |#
 (define-c-const unsigned-long CS7)
 (define-c-const unsigned-long CS8)
 
+;; c_cc subscripts
+
+(define-c-const unsigned-long VEOF)   ;; canonical mode only
+(define-c-const unsigned-long VEOL)   ;; canonical mode only
+(define-c-const unsigned-long VEOL2)   ;; canonical mode only
+(define-c-const unsigned-long VERASE) ;; canonical mode only
+(define-c-const unsigned-long VINTR)
+(define-c-const unsigned-long VKILL)  ;; canonical mode only
+(define-c-const unsigned-long VQUIT)
+(define-c-const unsigned-long VSUSP)
+(define-c-const unsigned-long VSTART)
+(define-c-const unsigned-long VSTOP)
+
+(define-c-const unsigned-long VMIN)   ;; minimum number of characters, non-canonical mode only, may have same value as VEOF
+(define-c-const unsigned-long VTIME)  ;; minimum time in deciseconds, non-canonical mode only, may have same value as VEOL
 
 ;;; Miscellaneous procedures
 
