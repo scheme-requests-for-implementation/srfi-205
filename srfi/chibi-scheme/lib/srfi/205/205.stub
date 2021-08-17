@@ -214,7 +214,9 @@ end removal of all but terminal? supporting stubs |#
 
 (define-c-const unsigned-long BRKINT)
 (define-c-const unsigned-long CLOCAL)
-(define-c-const unsigned-long CMSPAR)
+(cond-expand
+ ((not openbsd)
+  (define-c-const unsigned-long CMSPAR)))
 (define-c-const unsigned-long CREAD)
 (define-c-const unsigned-long CRTSCTS)
 (define-c-const unsigned-long CSTOPB)
