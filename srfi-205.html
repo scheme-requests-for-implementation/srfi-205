@@ -343,6 +343,9 @@ and the implementation model is followed thereafter.
 Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
 extended to allow specifying the special device file to be
 manipulated, here associated with a port.
+When raising an error, the terminal port must be set back to its
+original values, and the error object must report which of the values
+<code>tcsetattr()</code> was unable to set is that is the cause.
 At least the following arguments must be supported,
 although they may or may not have the expected result:
 </p>
@@ -451,7 +454,6 @@ in effect for the device, if not an error is raised.
 </ul>
 </li>
 </ul>
-
 </blockquote>
 
 <code>(gtty)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>list</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)
