@@ -337,7 +337,7 @@ and the implementation model is followed thereafter.
 
 <h3>Low-level terminal manipulation</h3>
 
-<code>(stty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined or list</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
+<code>(stty <i>port . args</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>undefined, list or state-object</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
 <blockquote>
 <p>
 Use in the manner of P<small>OSIX</small> <code>stty(1)</code>, as
@@ -397,6 +397,7 @@ Symbol arguments
 <li><code>parmrk</code> <code>no-parmrk</code></li>
 <li><code>parodd</code> <code>no-parodd</code></li>
 <li><code>sane</code></li>
+<li><code>state-object</code></li>
 <li><code>tostop</code> <code>no-tostop</code></li>
 <li><code>xcase</code> <code>no-xcase</code></li>
 </ul>
@@ -407,6 +408,14 @@ optional argument if they are used.
 <code>get</code> returns a list of the current settings of the port
 as symbols and two-element lists suitable for using again
 with <code>stty</code>.
+</p>
+<p>
+The argument <code>state-object</code> as a symbol causes stty to
+return an opaque object that was the state of the terminal prior to it
+being set.  If the first element in a two element list, the terminal
+will be reset to the values of the second object, which must be
+a <code>state-object</code> as previously returned by a call
+to <code>stty</code>.
 </p>
 <li>
 <p>
