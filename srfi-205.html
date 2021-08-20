@@ -484,6 +484,16 @@ See also the <code>terminal?</code> procedure in
 which returns <code>#t</code> if the supplied port argument is a terminal.
 </p>
 
+<code>(terminal-dimensions <i>port</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>list</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>ioctl()</code>
+<blockquote>
+<p>
+Returns a list of two integers, the height and width of the terminal.
+</p>
+<pre class="example">
+(terminal-file-name (current-output-port)) &rArr; (24 80)
+</pre>
+</blockquote>
+
 <code>(terminal-file-name <i>port</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>string</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>ttyname()</code>
 <blockquote>
 <p>
