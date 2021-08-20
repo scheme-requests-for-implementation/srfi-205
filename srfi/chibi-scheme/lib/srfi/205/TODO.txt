@@ -5,6 +5,11 @@ For each release:
 
 ----------------
 
+Rename gtty, it's overloaded with a previous not the same use and is
+not descriptive of what it does.
+
+----------------
+
 Split tests into "works for all" with-* etc., and serial line
 manipulation; for the latter, why not an echo server?
 
@@ -18,10 +23,6 @@ https://srfi-email.schemers.org/srfi-205/msg/14647343/
  * (tty-process-group fd/port/fname)
  * (set-tty-process-group fd/port/fname pgrp)
  * (control-tty-file-name)
-
-----------------
-
-HTML: add terminal-dimensions.
 
 ----------------
 

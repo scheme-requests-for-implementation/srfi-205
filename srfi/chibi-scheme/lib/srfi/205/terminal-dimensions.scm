@@ -25,7 +25,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 |#
 
-;;; Copy from Chibi Scheme stty.stub with a few trivial improvements
+;;; Copy from Chibi Scheme stty.scm with a few trivial improvements
 ;;; plus error handling and more error checking since it does exactly
 ;;; what's needed.
 
@@ -38,4 +38,4 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     (let ((ws (retry-if-EINTR (lambda () (ioctl the-fd TIOCGWINSZ)))))
       (if (not ws)
           (errno-error (errno) 'terminal-dimensions 'ioctl the-port)
-          (list (winsize-col ws) (winsize-row ws))))))
+          (list (winsize-row ws) (winsize-col ws))))))
