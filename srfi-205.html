@@ -298,8 +298,8 @@ Echoing of input is enabled on the terminal during the execution
 of <code>proc</code>.
 </p>
 <p>In terms of the implementation model,
-the state object at the bottom of the stack is retrieved and a copy of it is pushed on the stack.
-Then another copy of the state object is modified by enabling the following flags
+the current terminal state is retrieved and a copy of it is pushed on the stack as a state object.
+Then a copy of the state object at the bottom of the stack is modified by enabling the following flags
 (which are probably already enabled, but we make sure)
 <code>ECHO ECHOE ECHOK ICANON IEXTEN ISIG BRKINT ICRNL INPCK ISTRIP IXON CSIZE PARENB OPOST</code>,
 and the <code>CS8</code> setting is enabled.
