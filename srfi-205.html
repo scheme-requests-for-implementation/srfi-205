@@ -226,7 +226,7 @@ generally used to enter a password or passphrase.  The procedures
 return the values that <code><i>proc</i></code> returns.
 </p>
 
-<code>(with-raw-mode <i>port min time proc</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
+<code>(with-raw-mode <i>port proc min time</i>)</code> &nbsp;&nbsp;&nbsp;&rarr; &nbsp;&nbsp;&nbsp;<i>[values]</i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(procedure)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P<small>OSIX</small> <code>tcgetattr(), tcsetattr()</code>
 <blockquote>
 <p>
 The terminal is set to raw mode during the dynamic execution of <code>proc</code>
