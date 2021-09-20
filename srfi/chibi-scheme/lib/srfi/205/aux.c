@@ -191,7 +191,7 @@ sexp sexp_init_library (sexp ctx, sexp self, sexp_sint_t n, sexp env, const char
   name = sexp_intern(ctx, "term-attrs?", 11);
   sexp_env_define(ctx, env, name, tmp);
 
-  op = sexp_define_foreign(ctx, env, "term-attrs-cc-element-set!", 3, sexp_termios_set_cc_element);
+  op = sexp_define_foreign(ctx, env, "cc-element-set!", 3, sexp_termios_set_cc_element);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
@@ -202,7 +202,7 @@ sexp sexp_init_library (sexp ctx, sexp self, sexp_sint_t n, sexp env, const char
 // and does not exist for %tcgetattr or %tcsetattr
 //  if (sexp_vectorp(sexp_type_setters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_setters(sexp_termios_type_obj), SEXP_THREE, op);
 
-  op = sexp_define_foreign(ctx, env, "term-attrs-cc-element", 2, sexp_termios_get_cc_element);
+  op = sexp_define_foreign(ctx, env, "cc-element-get", 2, sexp_termios_get_cc_element);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
@@ -212,56 +212,56 @@ sexp sexp_init_library (sexp ctx, sexp self, sexp_sint_t n, sexp env, const char
 // and does not exist for %tcgetattr or %tcsetattr
 //  if (sexp_vectorp(sexp_type_getters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_getters(sexp_termios_type_obj), SEXP_THREE, op);
 
-  op = sexp_define_foreign(ctx, env, "term-attrs-lflag-set!", 2, sexp_termios_set_c_lflag);
+  op = sexp_define_foreign(ctx, env, "lflag-set!", 2, sexp_termios_set_c_lflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
     sexp_opcode_arg2_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
   }
   if (sexp_vectorp(sexp_type_setters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_setters(sexp_termios_type_obj), SEXP_THREE, op);
-  op = sexp_define_foreign(ctx, env, "term-attrs-lflag", 1, sexp_termios_get_c_lflag);
+  op = sexp_define_foreign(ctx, env, "lflag-get", 1, sexp_termios_get_c_lflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
   }
   if (sexp_vectorp(sexp_type_getters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_getters(sexp_termios_type_obj), SEXP_THREE, op);
 
-  op = sexp_define_foreign(ctx, env, "term-attrs-cflag-set!", 2, sexp_termios_set_c_cflag);
+  op = sexp_define_foreign(ctx, env, "cflag-set!", 2, sexp_termios_set_c_cflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
     sexp_opcode_arg2_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
   }
   if (sexp_vectorp(sexp_type_setters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_setters(sexp_termios_type_obj), SEXP_TWO, op);
-  op = sexp_define_foreign(ctx, env, "term-attrs-cflag", 1, sexp_termios_get_c_cflag);
+  op = sexp_define_foreign(ctx, env, "cflag-get", 1, sexp_termios_get_c_cflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
   }
   if (sexp_vectorp(sexp_type_getters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_getters(sexp_termios_type_obj), SEXP_TWO, op);
 
-  op = sexp_define_foreign(ctx, env, "term-attrs-oflag-set!", 2, sexp_termios_set_c_oflag);
+  op = sexp_define_foreign(ctx, env, "oflag-set!", 2, sexp_termios_set_c_oflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
     sexp_opcode_arg2_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
   }
   if (sexp_vectorp(sexp_type_setters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_setters(sexp_termios_type_obj), SEXP_ONE, op);
-  op = sexp_define_foreign(ctx, env, "term-attrs-oflag", 1, sexp_termios_get_c_oflag);
+  op = sexp_define_foreign(ctx, env, "oflag-get", 1, sexp_termios_get_c_oflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
   }
   if (sexp_vectorp(sexp_type_getters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_getters(sexp_termios_type_obj), SEXP_ONE, op);
 
-  op = sexp_define_foreign(ctx, env, "term-attrs-iflag-set!", 2, sexp_termios_set_c_iflag);
+  op = sexp_define_foreign(ctx, env, "iflag-set!", 2, sexp_termios_set_c_iflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
     sexp_opcode_arg2_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
   }
   if (sexp_vectorp(sexp_type_setters(sexp_termios_type_obj))) sexp_vector_set(sexp_type_setters(sexp_termios_type_obj), SEXP_ZERO, op);
-  op = sexp_define_foreign(ctx, env, "term-attrs-iflag", 1, sexp_termios_get_c_iflag);
+  op = sexp_define_foreign(ctx, env, "iflag-get", 1, sexp_termios_get_c_iflag);
   if (sexp_opcodep(op)) {
     sexp_opcode_return_type(op) = sexp_make_fixnum(SEXP_FIXNUM);
     sexp_opcode_arg1_type(op) = sexp_make_fixnum(sexp_type_tag(sexp_termios_type_obj));
