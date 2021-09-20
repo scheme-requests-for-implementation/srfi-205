@@ -4,17 +4,6 @@
 ;; All terminal procedures except for terminal? will be moved to a new
 ;; SRFI; this working code is left here for it.
 
-(define (terminal-file-name the-port)
-  (if (not (port? the-port))
-      (sanity-check-error "argument must be a port" 'terminal-file-name the-port))
-  (let ((the-fd (port-fd the-port)))
-    (if (not the-fd)
-        (sanity-check-error "port must have a file descriptor associated with it" 'terminal-file-name the-port))
-    (let ((the-file-name (%ttyname_r the-fd)))
-      (if (not the-file-name)
-          (errno-error (errno) 'terminal-file-name 'ttyname_r the-port))
-      the-file-name)))
-
 ;; ~~~~ all prefactory with- and without- errno-errors need a more
 ;;      specific error indicator, that's why they're not combined
 
@@ -247,9 +236,9 @@ CS5 CS6 CS7 CS8
   (let ((the-fd (port-fileno the-port)))
     (if (not (exact-integer? the-fd))
         (sanity-check-error "argument must be a port associated with a file descriptor" 'terminal-file-name the-port))
-    (let ((the-filename (%ttyname the-fd)))
+    (let ((the-filename (%ttyname_r the-fd)))
       (if (not the-filename)
-          (errno-error (errno) 'terminal-file-name 'ttyname the-port)
+          (errno-error (errno) 'terminal-file-name 'ttyname_r the-port)
           the-filename))))
 
 (define (terminal-flow-control the-port the-action)
