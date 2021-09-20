@@ -226,6 +226,111 @@ CS5 CS6 CS7 CS8
 
 ;; HUP = HUPCL
 
+(define-record-type Terminal-State-Object
+  (make-terminal-state-object termios)
+  terminal-state-object?
+  (termios get-termios))
+
+(define (stty)
+  1)
+
+
+(define (brkint the-state-object)
+  (let ((the-termios (termios the-state-object)))
+       (iflag-set! the-termios (bitwise-ior (iflag-get the-termios) BRKINT))))
+
+(define (no-brkint the-state-object)
+  (let ((the-termios (termios the-state-object)))
+       (iflag-set! the-termios (bitwise-and (iflag-get the-termios) (bitwise-not BRKINT)))))
+
+#|no-brkint
+clocal
+no-clocal
+cmspar
+no-cmspar
+cread
+no-cread
+crtscts
+no-crtscts
+cs5
+cs6
+cs7
+cs8
+cstopb
+no-cstopb
+echo
+no-echo
+echoctl
+no-echoctl
+echoe
+no-echoe
+echok
+no-echok
+echonl
+no-echonl
+hup
+no-hup
+hupcl
+no-hupcl
+icanon
+no-icanon
+icrnl
+no-icrnl
+iexten
+no-iexten
+ignbrk
+no-ignbrk
+igncr
+no-igncr
+ignpar
+no-ignpar
+imaxbel
+no-imaxbel
+inlcr
+no-inlcr
+inpck
+no-inpck
+isig
+no-isig
+istrip
+no-istrip
+iuclc
+no-iuclc
+ixany
+no-ixany
+ixoff
+no-ixoff
+ixon
+no-ixon
+noflsh
+no-noflsh
+now
+drain
+flush
+ocrnl
+no-ocrnl
+olcuc
+no-olcuc
+onlcr
+no-onlcr
+onlret
+no-onlret
+onocr
+no-onocr
+opost
+no-opost
+parenb
+no-parenb
+parmrk
+no-parmrk
+parodd
+no-parodd
+tostop
+no-tostop
+xcase
+no-xcase
+|#
+
 
 
 ;;; Miscellaneous procedures
