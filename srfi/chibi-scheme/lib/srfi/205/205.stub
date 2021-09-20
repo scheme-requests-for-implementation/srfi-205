@@ -100,12 +100,6 @@
 ;; All terminal procedures except for terminal? will be moved to a new
 ;; SRFI; this working code is left here for it.
 
-(define-c-const int (tty/name-max "TTY_NAME_MAX"))
-
-(define-c errno (%ttyname_r ttyname_r)
-  (int (result (array char 65)) (value 65 int))) ;; should be big enough
-
-
 ;; termios structure and set and get constants, POSIX only
 
 ;; input modes for c_iflag
@@ -278,7 +272,10 @@ end removal of all but terminal? supporting stubs |#
 
 ;;; Miscellaneous procedures
 
-(define-c string (%ttyname ttyname) (int))
+;; (define-c-const int (tty/name-max "TTY_NAME_MAX"))
+
+(define-c errno (%ttyname_r ttyname_r)
+  (int (result (array char 65)) (value 65 int))) ;; should be big enough
 
 (define-c-const int (terminal/stop-output "TCOOFF"))
 (define-c-const int (terminal/start-output  "TCOON"))
