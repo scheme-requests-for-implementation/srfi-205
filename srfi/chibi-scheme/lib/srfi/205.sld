@@ -43,7 +43,55 @@
    ;; with-cooked-mode
    ;; without-echo
 
-   ;; stty
+   stty
+
+   brkint #|no-brkint
+   clocal no-clocal
+   cmspar no-cmspar
+   cread no-cread
+   crtscts no-crtscts
+   cs5 cs6 cs7 cs8
+   cstopb no-cstopb
+   echo no-echo
+   echoctl no-echoctl
+   echoe no-echoe
+   echok no-echok
+   echonl no-echonl
+   hup no-hup
+   hupcl no-hupcl
+   icanon no-icanon
+   icrnl no-icrnl
+   iexten no-iexten
+   ignbrk no-ignbrk
+   igncr no-igncr
+   ignpar no-ignpar
+   imaxbel no-imaxbel
+   inlcr no-inlcr
+   inpck no-inpck
+   isig no-isig
+   istrip no-istrip
+   iuclc no-iuclc
+   ixany no-ixany
+   ixoff no-ixoff
+   ixon no-ixon
+   noflsh no-noflsh
+   now drain flush
+   ocrnl no-ocrnl
+   olcuc no-olcuc
+   onlcr no-onlcr
+   onlret no-onlret
+   onocr no-onocr
+   opost no-opost
+   parenb no-parenb
+   parmrk no-parmrk
+   parodd no-parodd
+   tostop no-tostop
+   xcase no-xcase
+   |#
+   ;; get
+   ;; state-object
+   ;; sane
+
    ;; gtty
 
    terminal-file-name
