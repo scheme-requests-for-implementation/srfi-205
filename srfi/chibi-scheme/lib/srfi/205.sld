@@ -1,4 +1,4 @@
-;; ~~~please see copyright notice in 205/COPYING
+;; please see copyright notice in 205/COPYING
 
 (define-library (srfi 205)
   (export
@@ -43,9 +43,9 @@
    ;; with-cooked-mode
    ;; without-echo
 
-   stty
+   ;; stty
 
-   brkint #|no-brkint
+#| brkint no-brkint
    clocal no-clocal
    cmspar no-cmspar
    cread no-cread
@@ -121,7 +121,7 @@
 
      (chibi)
      (rename (only (chibi ast) errno integer->error-string) (integer->error-string error-string))
-     (only (chibi stty) ioctl) ;; ~~~
+     (only (chibi stty) ioctl)
 
      (only (srfi 1) alist-cons)
      (only (srfi 69) make-hash-table hash-table-set! hash-table-ref)

@@ -1,4 +1,4 @@
-;; ~~~please see copyright notice in ./COPYING
+;; please see copyright notice in ./COPYING
 
 (define-record-type Posix-Interface-Error
     (make-posix-interface-error-record error-set errno-number errno-name scheme-procedure posix-interface message data)

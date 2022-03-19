@@ -1,4 +1,4 @@
-;; ~~~please see copyright notice in ./COPYING
+;; please see copyright notice in ./COPYING
 
 ;; Must be a library so test.sld has the same type of record to check
 ;; against.

@@ -1,4 +1,4 @@
-;; ~~~please see copyright notice in ./COPYING
+;; please see copyright notice in ./COPYING
 
 (c-system-include "unistd.h")
 (c-system-include "errno.h")

@@ -1,14 +1,9 @@
-;; ~~~please see copyright notice in ./COPYING
+;; please see copyright notice in ./COPYING
 
 ;;;;;;;;;; WARNING: ;;;;;;;;;;
 ;;
 ;; This SRFI is generally a side effecting one, so tests often depend
 ;; on the state left by previous ones if they worked.
-;;
-;; If you're sufficiently daring, this test suite runs fine as root,
-;; and some things can only be tested if run as root.  The only caveat
-;; is that before you try to run it as a normal user again, you must
-;; manually delete the tmp-containing-dir
 ;;
 
 (define-library (srfi 205 test)
@@ -159,7 +154,7 @@
                 (posix-error-message the-error))
           (test '(1 2 3 4) (cdr (assq 'arguments (posix-error-data the-error))))
 
-#| ~~~
+#|
           ;; Make sure the error raising code works for a real error
           (test-error ((with-exception-handler
                         (lambda (exception) (set! the-error exception))
@@ -259,7 +254,7 @@
           ) ;; end
 
 
-        (test-group "Epilogue: ~~~cleanup, force a gc"
+        (test-group "Epilogue: cleanup, force a gc"
 
           (close-port input-port-dev-zero)
 
