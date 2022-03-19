@@ -231,18 +231,6 @@ CS5 CS6 CS7 CS8
   terminal-state-object?
   (termios get-termios))
 
-(define (stty)
-  1)
-
-
-(define (brkint the-state-object)
-  (let ((the-termios (termios the-state-object)))
-       (iflag-set! the-termios (bitwise-ior (iflag-get the-termios) BRKINT))))
-
-(define (no-brkint the-state-object)
-  (let ((the-termios (termios the-state-object)))
-       (iflag-set! the-termios (bitwise-and (iflag-get the-termios) (bitwise-not BRKINT)))))
-
 #|no-brkint
 clocal
 no-clocal
