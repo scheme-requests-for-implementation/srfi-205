@@ -1,6 +1,6 @@
 * SRFI 205: POSIX Terminal Fundamentals
 
-** by John Cowan (author) and Harold Ancell (author and editor)
+** by John Cowan and Harold Ancell
 
 
 
