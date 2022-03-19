@@ -1,11 +1,15 @@
-;; ~~~please see copyright notice in ./COPYING
+;; please see copyright notice in ./COPYING
 
 #|
+;; The following was a quick and dirty implimentation of the highest
+;; procedures WITHOUT the use of stty; how messy and sprawling they'd
+;; have to be even after cleanup is a primary motivation for this SRFI
+
 ;; All terminal procedures except for terminal? will be moved to a new
 ;; SRFI; this working code is left here for it.
 
-;; ~~~~ all prefactory with- and without- errno-errors need a more
-;;      specific error indicator, that's why they're not combined
+;; all prefactory with- and without- errno-errors need a more
+;; specific error indicator, that's why they're not combined
 
 (define (with-raw-mode input-port output-port min time proc)
   (if (not (and (port? input-port) (port? output-port)))
@@ -21,13 +25,13 @@
 
   (let* ((initial-input-termios (%tcgetattr input-port))
          (initial-output-termios (%tcgetattr output-port))
-         (new-input-termios (%tcgetattr input-port)) ;; ~~~~ because of tagging, how to copy is not obvious
-         (new-output-termios (%tcgetattr output-port)) ;; ~~~~ because of tagging, how to copy is not obvious
+         (new-input-termios (%tcgetattr input-port)) ;; because of tagging, how to copy is not obvious
+         (new-output-termios (%tcgetattr output-port)) ;; because of tagging, how to copy is not obvious
          (reset-terminal (lambda ()
                            (let ((input-return (retry-if-EINTR (lambda () (%tcsetattr input-port TCSAFLUSH initial-input-termios))))) ;; still try resetting output
                              (if (not (and (retry-if-EINTR (lambda () (%tcsetattr output-port TCSAFLUSH initial-output-termios))) input-return))
                                  (errno-error (errno) 'with-raw-mode 'tcsetattr input-port output-port min time proc))))) ;; might as well exit the procedure
-         ;; ~~~~~~~~ set all for *both* ports???
+         ;; set all for *both* ports???
          (the-lflags (bitwise-ior ECHO ICANON IEXTEN ISIG))
          (the-iflags (bitwise-ior BRKINT ICRNL INPCK ISTRIP IXON))
          (the-and-cflags (bitwise-ior CSIZE PARENB))
@@ -47,8 +51,8 @@
                            (bitwise-ior (term-attrs-cflag new-input-termios) the-ior-cflags))
     (term-attrs-oflag-set! new-input-termios
                            (bitwise-and (term-attrs-oflag new-input-termios) (bitwise-not the-oflags)))
-    (term-attrs-cc-element-set! new-input-termios min VMIN) ;; ~~~~ ought to transpose array index and value to put in it
-    (term-attrs-cc-element-set! new-input-termios time VTIME) ;; ~~~~ ought to transpose array index and value to put in it
+    (term-attrs-cc-element-set! new-input-termios min VMIN) ;; ought to transpose array index and value to put in it
+    (term-attrs-cc-element-set! new-input-termios time VTIME) ;; ought to transpose array index and value to put in it
 
     (term-attrs-lflag-set! new-output-termios
                            (bitwise-and (term-attrs-lflag new-output-termios) (bitwise-not the-lflags)))
@@ -101,21 +105,21 @@
 
   (let* ((initial-input-termios (%tcgetattr input-port))
          (initial-output-termios (%tcgetattr output-port))
-         (new-input-termios (%tcgetattr input-port)) ;; ~~~~ because of tagging, how to copy is not obvious
-         (new-output-termios (%tcgetattr output-port)) ;; ~~~~ because of tagging, how to copy is not obvious
+         (new-input-termios (%tcgetattr input-port)) ;; because of tagging, how to copy is not obvious
+         (new-output-termios (%tcgetattr output-port)) ;; because of tagging, how to copy is not obvious
          (reset-terminal (lambda ()
                            (let ((input-return (retry-if-EINTR (lambda () (%tcsetattr input-port TCSAFLUSH initial-input-termios))))) ;; still try resetting output
                              (if (not (and (retry-if-EINTR (lambda () (%tcsetattr output-port TCSAFLUSH initial-output-termios))) input-return))
                                  (errno-error (errno) 'with-rare-mode 'tcsetattr input-port output-port proc))))) ;; might as well exit the procedure
-         (the-lflags (bitwise-ior ICANON ECHO))) ;; ~~~~~~~ set for *both* ports???
+         (the-lflags (bitwise-ior ICANON ECHO))) ;; set for *both* ports???
 
     (if (or (not initial-input-termios) (not new-input-termios) (not initial-output-termios) (not new-output-termios))
         (sanity-check-error "failure to get or set termios data" 'with-rare-mode input-port output-port proc))
 
     (term-attrs-lflag-set! new-input-termios
                            (bitwise-and (term-attrs-lflag new-input-termios) (bitwise-not the-lflags)))
-    (term-attrs-cc-element-set! new-input-termios 1 VMIN) ;; ~~~~ ought to transpose array index and value to put in it
-    (term-attrs-cc-element-set! new-input-termios 0 VTIME) ;; ~~~~ ought to transpose array index and value to put in it
+    (term-attrs-cc-element-set! new-input-termios 1 VMIN) ;;  ought to transpose array index and value to put in it
+    (term-attrs-cc-element-set! new-input-termios 0 VTIME) ;;  ought to transpose array index and value to put in it
     (term-attrs-lflag-set! new-output-termios
                            (bitwise-and (term-attrs-lflag new-output-termios) (bitwise-not the-lflags)))
     (dynamic-wind
@@ -151,7 +155,7 @@
       (sanity-check-error "first two arguments must be an input and output ports, respectively" 'without-echo input-port output-port proc))
 
   (let* ((initial-output-termios (%tcgetattr output-port))
-         (new-output-termios (%tcgetattr output-port)) ;; ~~~~ because of tagging, how to copy is not obvious
+         (new-output-termios (%tcgetattr output-port)) ;; because of tagging, how to copy is not obvious
          (reset-terminal (lambda ()
                            (if (not (retry-if-EINTR (lambda () (%tcsetattr output-port TCSAFLUSH initial-output-termios))))
                                (errno-error (errno) 'without-echo 'tcsetattr output-port proc)))) ;; might as well exit the procedure

@@ -10,7 +10,7 @@
     <h1><a href="https://srfi.schemers.org/"><img class="srfi-logo" src="https://srfi.schemers.org/srfi-logo.svg" alt="SRFI logo" /></a>205: POSIX Terminal Fundamentals</h1>
 
 <p>
-by John Cowan (author) and Harold Ancell (author and editor)
+by John Cowan and Harold Ancell
 </p>
 
 
@@ -22,9 +22,6 @@ by John Cowan (author) and Harold Ancell (author and editor)
   <li>60-day deadline: 2020-07-24</li>
   <li>Draft #1 published: 2020-07-26</li>
   <li>Draft #2 published: 2020-10-24</li>
-  <li>Harold Ancell's <a href="https://github.com/hga/srfi-205">personal
-    Git repo for this SRFI</a> for reference while the SRFI is in
-    <em>draft</em> status (<a href="https://htmlpreview.github.io/?https://github.com/hga/srfi-205/blob/master/srfi-205.html">preview</a>)</li>
 </ul>
 
 
@@ -403,6 +400,7 @@ Symbol arguments
 <li><code>xcase</code> <code>no-xcase</code></li>
 </ul>
 </li>
+<li>
 <p>
 The arguments <code>get</code> and <code>sane</code> must be the only
 optional argument if they are used.
@@ -410,6 +408,8 @@ optional argument if they are used.
 as symbols and two-element lists suitable for using again
 with <code>stty</code>.
 </p>
+</li>
+<li>
 <p>
 The argument <code>state-object</code> as a symbol causes stty to
 return an opaque object that was the state of the terminal prior to it
@@ -418,6 +418,7 @@ will be reset to the values of the second object, which must be
 a <code>state-object</code> as previously returned by a call
 to <code>stty</code>.
 </p>
+</li>
 <li>
 <p>
 Two-element list arguments of the form
@@ -471,7 +472,7 @@ in effect for the device, if not an error is raised.
 <p>
 Returns a list of symbols and two-element lists
 that are acceptable to the implementation of <code>stty</code>.
-A particlar serial line port may not support all of them.
+A particular serial line port may not support all of them.
 </p>
 </blockquote>
 
@@ -566,8 +567,8 @@ length of time.
 <h2>Implementation</h2>
 
 <p>
-A Chibi Scheme sample implementation can be found in srfi/chibi-scheme
-of the SRFI repository.
+The beginnings of a Chibi Scheme sample implementation can be found in
+srfi/chibi-scheme of the SRFI repository.
 </p>
 
 
@@ -582,7 +583,7 @@ odd, often non-echoing state.
 
 
 <h2>Copyright</h2>
-<p>Copyright &copy; (2020) John Cowan and Harold Ancell.</p>
+<p>Copyright &copy; (2022) John Cowan and Harold Ancell.</p>
 
 <p>
   Permission is hereby granted, free of charge, to any person

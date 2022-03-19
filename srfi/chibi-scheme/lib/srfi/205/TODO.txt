@@ -25,7 +25,7 @@ HTML: Add examples to Error Handling section.
 
 ----------------
 
-Adjustments to what in termios can or should be changeble:
+Adjustments to what in termios can or should be changeable:
 
 Note Linux will generally be the OS of choice to do embedded
 programming with (after Windows) due to tool support, which is
@@ -47,10 +47,21 @@ and sys/termios.h in OpenBSD
 
 ----------------
 
-Hello World example, initial warning, have done this before.
+A note for starting with the Hello World example using a TI MSP430
+development board, in this case the MSP-EXP430FR5994, and their free
+but not FOSS CCS development suite (GCC is frequently not so good for
+embedded work compared to a bespoke compiler):
 
-Description	Resource	Path	Location	Type
+The out of the box Hello World example code reports this relevant
+warning:
 
-<a href="file:/usr/local/share/ti/ccs1031/ccs/tools/compiler/dmed/HTML/MSP430/10420.html">#10420-D</a>
+"For FRAM devices, at start up, the GPIO power-on default
+high-impedance mode needs to be disabled to activate previously
+configured port settings. This can be done by clearing the LOCKLPM5
+bit in PM5CTL0 register."
 
-For FRAM devices, at start up, the GPIO power-on default high-impedance mode needs to be disabled to activate previously configured port settings. This can be done by clearing the LOCKLPM5 bit in PM5CTL0 register.
+Fix this by adding the following to the very beginning of main():
+
+	// Disable the GPIO power-on default high-impedance mode to activate
+	// previously configured port settings
+	PM5CTL0 &= ~LOCKLPM5;

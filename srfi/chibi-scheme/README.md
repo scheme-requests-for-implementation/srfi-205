@@ -1,6 +1,13 @@
+# The following is the beginnings of a Chibi Scheme sample implimentation.
+
+# Started from the example code for SRFI 170, there are vestigal parts from that still in it which probably need to be pruned if this is to be finished.
+
+# However what's here does compile and pass the tests written to date.
+
+
 # Chibi Scheme example implementation of SRFI 205
 
-~~~Please see copyright notice in lib/srfi/205/COPYING.
+Please see copyright notice in lib/srfi/205/COPYING.
 
 Please note this is a not of production quality example implementation
 of SRFI 205 for Linux and OpenBSD, is primarily for pedagogical
@@ -48,12 +55,6 @@ To run the tests, either do a "gmake test" with the above mentioned
 CHIBI_LOCATION_PATH environment variable set, or something like:
 
 LD_LIBRARY_PATH=".:/usr/local/src/chibi-scheme" DYLD_LIBRARY_PATH=".:/usr/local/src/chibi-scheme" CHIBI_IGNORE_SYSTEM_PATH=1 CHIBI_MODULE_PATH="./lib:/usr/local/src/chibi-scheme/lib" /usr/local/src/chibi-scheme/chibi-scheme -m "(srfi 205 test)" -e "(run-tests)"
-
-~~~Which run successfully on x86-64 Ubuntu 18.04 Linux kernel 4.15.0-112,
-gcc v7.5.0, and x86-64 OpenBSD 6.7, clang v8.0.1.
-
-~~~The test suite 205/test.sld can be run as root, and needs to be to
-run as root to fully test some features, see the comments at its top.
 
 The test suite is pretty generic and should be adaptable to your
 implementation, note aux.c for some unexported magic like (errno) and

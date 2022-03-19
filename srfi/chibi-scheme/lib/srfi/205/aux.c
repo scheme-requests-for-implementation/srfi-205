@@ -1,4 +1,4 @@
-// ~~~please see copyright notice in ./COPYING
+// please see copyright notice in ./COPYING
 
 #include <chibi/eval.h>
 
@@ -15,7 +15,7 @@
 // 3) retrieving its value.  See the SRFI 199 discussion for more
 // details: (https://srfi-email.schemers.org/srfi-199/)
 
-// ~~~set-errno sets errno to its supplied argument
+// set-errno sets errno to its supplied argument
 
 sexp sexp_set_errno (sexp ctx, sexp self, sexp_sint_t n, sexp x) {
   sexp_assert_type(ctx, sexp_fixnump, SEXP_FIXNUM, x);
@@ -25,7 +25,7 @@ sexp sexp_set_errno (sexp ctx, sexp self, sexp_sint_t n, sexp x) {
 }
 
 
-//~~~
+//
 sexp sexp_fileno_to_fd (sexp ctx, sexp self, sexp_sint_t n, sexp the_fileno) {
   sexp res;
   if (! (sexp_filenop(the_fileno)))
@@ -164,11 +164,11 @@ sexp sexp_init_library (sexp ctx, sexp self, sexp_sint_t n, sexp env, const char
         && sexp_abi_compatible(ctx, abi, SEXP_ABI_IDENTIFIER)))
     return SEXP_ABI_ERROR;
 
-  sexp_define_foreign(ctx, env, "set-errno", 1, sexp_set_errno); //~~~
+  sexp_define_foreign(ctx, env, "set-errno", 1, sexp_set_errno);
 
   sexp_define_foreign(ctx, env, "%fileno-to-fd", 1, sexp_fileno_to_fd);
 
-  // ~~~~ examine sexp_register_simple_type to create double timespect struct???
+  // examine sexp_register_simple_type to create double timespect struct???
 
   sexp_gc_preserve3(ctx, name, tmp, op);
 
@@ -182,8 +182,8 @@ sexp sexp_init_library (sexp ctx, sexp self, sexp_sint_t n, sexp env, const char
   sexp_push(ctx, sexp_type_slots(sexp_termios_type_obj), sexp_intern(ctx, "c_cflag", -1));
   sexp_push(ctx, sexp_type_slots(sexp_termios_type_obj), sexp_intern(ctx, "c_oflag", -1));
   sexp_push(ctx, sexp_type_slots(sexp_termios_type_obj), sexp_intern(ctx, "c_iflag", -1));
-  // ~~~~ it looks like I might want to add the specialized c_cc getter and setter here,
-  //      but they're not the simple one or two argument variety
+  // it looks like I might want to add the specialized c_cc getter and setter here,
+  // but they're not the simple one or two argument variety
   sexp_type_getters(sexp_termios_type_obj) = sexp_make_vector(ctx, SEXP_FOUR, SEXP_FALSE);
   sexp_type_setters(sexp_termios_type_obj) = sexp_make_vector(ctx, SEXP_FOUR, SEXP_FALSE);
 
